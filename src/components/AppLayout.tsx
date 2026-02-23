@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAppContext } from '@/contexts/AppContext';
 import { AppSidebar } from '@/components/AppSidebar';
+import { FlowProgressBar } from '@/components/FlowProgressBar';
+import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { Menu, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
@@ -47,10 +49,12 @@ export function AppLayout() {
             </Button>
           </div>
         </header>
-        <main className="flex-1 overflow-auto p-4 md:p-6">
+        <FlowProgressBar />
+        <main className="flex-1 overflow-auto p-4 md:p-6 pb-20 md:pb-6">
           <Outlet />
         </main>
       </div>
+      <MobileBottomNav />
     </div>
   );
 }

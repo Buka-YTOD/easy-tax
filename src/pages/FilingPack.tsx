@@ -1,15 +1,18 @@
+import { Link } from 'react-router-dom';
 import { useFilingPack, useGenerateFilingPack } from '@/hooks/useFilingPack';
+import { useComputation } from '@/hooks/useComputation';
 import { useAppContext } from '@/contexts/AppContext';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { JsonViewer } from '@/components/JsonViewer';
-import { FileText, Download, Copy, Loader2 } from 'lucide-react';
+import { FileText, Download, Copy, Loader2, Calculator, PartyPopper } from 'lucide-react';
 
 export default function FilingPack() {
   const { selectedTaxYear } = useAppContext();
   const { data: pack } = useFilingPack();
+  const { data: computation } = useComputation();
   const generatePack = useGenerateFilingPack();
   const { toast } = useToast();
 
@@ -38,6 +41,26 @@ export default function FilingPack() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
+  // No computation exists — guide user
+  if (!computation && !pack) {
+    return (
+      <div className="max-w-md mx-auto text-center py-16 space-y-6">
+        <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
+          <Calculator className="h-8 w-8 text-primary" />
+        </div>
+        <h1 className="text-2xl font-bold">Compute your tax first</h1>
+        <p className="text-muted-foreground">
+          You need to compute your tax before generating a filing pack.
+        </p>
+        <Link to="/app/result">
+          <Button size="lg">
+            <Calculator className="h-5 w-5 mr-2" /> Go to Compute
+          </Button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -81,13 +104,24 @@ export default function FilingPack() {
               <JsonViewer data={summaryJson} />
             </CardContent>
           </Card>
+
+          {/* Celebration state */}
+          <Card className="border-primary/20 bg-primary/5">
+            <CardContent className="py-8 text-center">
+              <PartyPopper className="h-10 w-10 mx-auto text-primary mb-3" />
+              <h3 className="font-semibold text-lg">You're all done!</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Download your filing pack above and submit it with your tax return.
+              </p>
+            </CardContent>
+          </Card>
         </>
       ) : (
         <Card>
           <CardContent className="py-12 text-center">
             <FileText className="h-12 w-12 mx-auto text-muted-foreground/30" />
             <p className="mt-4 text-muted-foreground">
-              No filing pack yet. Generate one after computing your tax.
+              No filing pack yet. Click "Generate Filing Pack" above to create one.
             </p>
           </CardContent>
         </Card>
