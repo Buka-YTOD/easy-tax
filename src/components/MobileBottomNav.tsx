@@ -3,7 +3,7 @@ import { Home, Sparkles, ClipboardCheck, BarChart3, MoreHorizontal } from 'lucid
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { FileText, Wrench, Settings } from 'lucide-react';
+import { FileText, Wrench, Settings, Upload, Lightbulb, TrendingUp, CalendarDays, FolderOpen } from 'lucide-react';
 
 const mainItems = [
   { title: 'Home', path: '/app/home', icon: Home },
@@ -14,6 +14,11 @@ const mainItems = [
 
 const moreItems = [
   { title: 'Filing Pack', path: '/app/filing-pack', icon: FileText },
+  { title: 'Import CSV', path: '/app/import', icon: Upload },
+  { title: 'Tax Optimizer', path: '/app/optimizer', icon: Lightbulb },
+  { title: 'Year Comparison', path: '/app/comparison', icon: TrendingUp },
+  { title: 'Tax Calendar', path: '/app/calendar', icon: CalendarDays },
+  { title: 'Documents', path: '/app/documents', icon: FolderOpen },
   { title: 'Manual Mode', path: '/app/manual', icon: Wrench },
   { title: 'Settings', path: '/app/settings', icon: Settings },
 ];

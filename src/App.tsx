@@ -16,6 +16,11 @@ import Income from "./pages/Income";
 import CapitalGains from "./pages/CapitalGains";
 import Deductions from "./pages/Deductions";
 import Settings from "./pages/Settings";
+import ImportData from "./pages/ImportData";
+import TaxOptimizer from "./pages/TaxOptimizer";
+import YearComparison from "./pages/YearComparison";
+import TaxCalendar from "./pages/TaxCalendar";
+import DocumentVault from "./pages/DocumentVault";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +46,11 @@ const App = () => (
               <Route path="manual/capital-gains" element={<CapitalGains />} />
               <Route path="manual/deductions" element={<Deductions />} />
               <Route path="settings" element={<Settings />} />
+              <Route path="import" element={<ImportData />} />
+              <Route path="optimizer" element={<TaxOptimizer />} />
+              <Route path="comparison" element={<YearComparison />} />
+              <Route path="calendar" element={<TaxCalendar />} />
+              <Route path="documents" element={<DocumentVault />} />
             </Route>
             <Route path="/" element={<Navigate to="/app/home" replace />} />
             <Route path="*" element={<NotFound />} />

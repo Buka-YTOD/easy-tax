@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X, Check } from 'lucide-react';
+import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X, Check, Upload, Lightbulb, TrendingUp, CalendarDays, FolderOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useTaxProfile } from '@/hooks/useTaxProfile';
@@ -21,6 +21,16 @@ const navGroups = [
       { title: 'Review', path: '/app/review', icon: ClipboardCheck, completionKey: null },
       { title: 'Result', path: '/app/result', icon: BarChart3, completionKey: 'computation' },
       { title: 'Filing Pack', path: '/app/filing-pack', icon: FileText, completionKey: 'filingPack' },
+    ],
+  },
+  {
+    label: 'TOOLS',
+    items: [
+      { title: 'Import CSV', path: '/app/import', icon: Upload, completionKey: null },
+      { title: 'Tax Optimizer', path: '/app/optimizer', icon: Lightbulb, completionKey: null },
+      { title: 'Year Comparison', path: '/app/comparison', icon: TrendingUp, completionKey: null },
+      { title: 'Tax Calendar', path: '/app/calendar', icon: CalendarDays, completionKey: null },
+      { title: 'Documents', path: '/app/documents', icon: FolderOpen, completionKey: null },
     ],
   },
   {
@@ -67,7 +77,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         </div>
         <nav className="flex-1 py-2 px-3 overflow-auto">
           {navGroups.map((group) => (
-            <div key={group.label} className="mb-4">
+            <div key={group.label} className="mb-3">
               <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
                 {group.label}
               </p>
@@ -81,7 +91,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
                       onClick={onClose}
                       className={({ isActive }) =>
                         cn(
-                          'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors',
+                          'flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors',
                           isActive
                             ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
                             : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
