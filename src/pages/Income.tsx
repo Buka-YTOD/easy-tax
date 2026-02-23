@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -14,7 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { Plus, Trash2, Wallet } from 'lucide-react';
+import { Plus, Trash2, Wallet, ArrowLeft } from 'lucide-react';
 
 const INCOME_TYPES = ['Employment', 'Freelance', 'Business', 'Crypto', 'Investment', 'Rental', 'Other'] as const;
 const FREQUENCIES = ['OneOff', 'Monthly', 'Annual'] as const;
@@ -65,6 +66,9 @@ export default function Income() {
 
   return (
     <div className="space-y-6">
+      <Link to="/app/manual" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors mb-2">
+        <ArrowLeft className="h-4 w-4" /> Back to Manual Mode
+      </Link>
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Income Records</h1>
