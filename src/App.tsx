@@ -6,13 +6,16 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider } from "@/contexts/AppContext";
 import { AppLayout } from "@/components/AppLayout";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import TaxProfile from "./pages/TaxProfile";
+import Home from "./pages/Home";
+import Guided from "./pages/Guided";
+import Review from "./pages/Review";
+import Result from "./pages/Result";
+import FilingPack from "./pages/FilingPack";
+import ManualHub from "./pages/ManualHub";
 import Income from "./pages/Income";
 import CapitalGains from "./pages/CapitalGains";
-import Compute from "./pages/Compute";
-import FilingPack from "./pages/FilingPack";
-import AIAssistant from "./pages/AIAssistant";
+import Deductions from "./pages/Deductions";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,16 +30,19 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/app" element={<AppLayout />}>
-              <Route index element={<Navigate to="dashboard" replace />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="tax-profile" element={<TaxProfile />} />
-              <Route path="income" element={<Income />} />
-              <Route path="capital-gains" element={<CapitalGains />} />
-              <Route path="compute" element={<Compute />} />
+              <Route index element={<Navigate to="home" replace />} />
+              <Route path="home" element={<Home />} />
+              <Route path="guided" element={<Guided />} />
+              <Route path="review" element={<Review />} />
+              <Route path="result" element={<Result />} />
               <Route path="filing-pack" element={<FilingPack />} />
-              <Route path="ai-assistant" element={<AIAssistant />} />
+              <Route path="manual" element={<ManualHub />} />
+              <Route path="manual/income" element={<Income />} />
+              <Route path="manual/capital-gains" element={<CapitalGains />} />
+              <Route path="manual/deductions" element={<Deductions />} />
+              <Route path="settings" element={<Settings />} />
             </Route>
-            <Route path="/" element={<Navigate to="/app/dashboard" replace />} />
+            <Route path="/" element={<Navigate to="/app/home" replace />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
