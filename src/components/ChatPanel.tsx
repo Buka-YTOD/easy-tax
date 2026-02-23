@@ -48,7 +48,12 @@ export function ChatPanel({ messages, isLoading, onSend, onConfirmAction, confir
           </div>
         )}
 
-        {messages.map((msg) => (
+        {messages.map((msg, msgIndex) => {
+          // Questions are only interactive on the latest assistant message
+          const isLatestAssistant = msg.role === 'assistant' &&
+            msgIndex === messages.map((m, i) => m.role === 'assistant' ? i : -1).filter(i => i >= 0).pop();
+
+          return (
           <div
             key={msg.id}
             className={cn('flex gap-3', msg.role === 'user' ? 'justify-end' : 'justify-start')}
@@ -68,7 +73,7 @@ export function ChatPanel({ messages, isLoading, onSend, onConfirmAction, confir
             >
               <p className="whitespace-pre-wrap">{msg.content}</p>
 
-              {msg.role === 'assistant' && msg.questions && msg.questions.length > 0 && (
+              {msg.role === 'assistant' && msg.questions && msg.questions.length > 0 && isLatestAssistant && (
                 <QuestionRenderer
                   questions={msg.questions}
                   onSubmit={handleQuestionAnswer}
@@ -91,7 +96,8 @@ export function ChatPanel({ messages, isLoading, onSend, onConfirmAction, confir
               </div>
             )}
           </div>
-        ))}
+          );
+        })}
 
         {isLoading && (
           <div className="flex gap-3">
