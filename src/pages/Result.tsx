@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom';
 import { useComputation, useComputeTax } from '@/hooks/useComputation';
+import { useIncome } from '@/hooks/useIncome';
 import { formatNaira } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/StatCard';
 import { JsonViewer } from '@/components/JsonViewer';
-import { Calculator, FileText, ArrowRight, Loader2, Wallet, TrendingUp, Receipt } from 'lucide-react';
+import { Calculator, FileText, ArrowRight, Loader2, Wallet, TrendingUp, Receipt, Sparkles } from 'lucide-react';
 
 export default function Result() {
   const { data: computation, isLoading } = useComputation();
+  const { data: income = [] } = useIncome();
   const computeTax = useComputeTax();
 
   if (isLoading) {
@@ -21,6 +23,27 @@ export default function Result() {
   }
 
   if (!computation) {
+    // No income at all — guide user to start
+    if (income.length === 0) {
+      return (
+        <div className="max-w-md mx-auto text-center py-16 space-y-6">
+          <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
+            <Sparkles className="h-8 w-8 text-primary" />
+          </div>
+          <h1 className="text-2xl font-bold">No income data yet</h1>
+          <p className="text-muted-foreground">
+            You haven't added any income yet. Start with the guided interview to get set up, then come back to compute your tax.
+          </p>
+          <Link to="/app/guided">
+            <Button size="lg">
+              <Sparkles className="h-5 w-5 mr-2" /> Start Guided Interview
+            </Button>
+          </Link>
+        </div>
+      );
+    }
+
+    // Has income but not computed yet
     return (
       <div className="max-w-md mx-auto text-center py-16 space-y-6">
         <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">

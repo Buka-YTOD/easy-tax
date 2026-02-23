@@ -1,16 +1,35 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X } from 'lucide-react';
+import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { useTaxProfile } from '@/hooks/useTaxProfile';
+import { useIncome } from '@/hooks/useIncome';
+import { useComputation } from '@/hooks/useComputation';
+import { useFilingPack } from '@/hooks/useFilingPack';
 
-const navItems = [
-  { title: 'Home', path: '/app/home', icon: Home },
-  { title: 'Guided Interview', path: '/app/guided', icon: Sparkles },
-  { title: 'Review', path: '/app/review', icon: ClipboardCheck },
-  { title: 'Result', path: '/app/result', icon: BarChart3 },
-  { title: 'Filing Pack', path: '/app/filing-pack', icon: FileText },
-  { title: 'Manual Mode', path: '/app/manual', icon: Wrench },
-  { title: 'Settings', path: '/app/settings', icon: Settings },
+const navGroups = [
+  {
+    label: 'GET STARTED',
+    items: [
+      { title: 'Home', path: '/app/home', icon: Home, completionKey: null },
+      { title: 'Guided Interview', path: '/app/guided', icon: Sparkles, completionKey: 'income' },
+    ],
+  },
+  {
+    label: 'YOUR DATA',
+    items: [
+      { title: 'Review', path: '/app/review', icon: ClipboardCheck, completionKey: null },
+      { title: 'Result', path: '/app/result', icon: BarChart3, completionKey: 'computation' },
+      { title: 'Filing Pack', path: '/app/filing-pack', icon: FileText, completionKey: 'filingPack' },
+    ],
+  },
+  {
+    label: 'ADVANCED',
+    items: [
+      { title: 'Manual Mode', path: '/app/manual', icon: Wrench, completionKey: null },
+      { title: 'Settings', path: '/app/settings', icon: Settings, completionKey: 'profile' },
+    ],
+  },
 ];
 
 interface AppSidebarProps {
@@ -19,6 +38,18 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ open, onClose }: AppSidebarProps) {
+  const { data: profile } = useTaxProfile();
+  const { data: income = [] } = useIncome();
+  const { data: computation } = useComputation();
+  const { data: filingPack } = useFilingPack();
+
+  const completionMap: Record<string, boolean> = {
+    profile: !!profile?.stateOfResidence,
+    income: income.length > 0,
+    computation: !!computation,
+    filingPack: !!filingPack,
+  };
+
   return (
     <>
       {open && <div className="fixed inset-0 bg-foreground/30 z-40 lg:hidden" onClick={onClose} />}
@@ -34,24 +65,39 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
             <X className="h-4 w-4" />
           </Button>
         </div>
-        <nav className="flex-1 py-4 px-3 space-y-1">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              onClick={onClose}
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors',
-                  isActive
-                    ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
-                    : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
-                )
-              }
-            >
-              <item.icon className="h-4 w-4 shrink-0" />
-              <span>{item.title}</span>
-            </NavLink>
+        <nav className="flex-1 py-2 px-3 overflow-auto">
+          {navGroups.map((group) => (
+            <div key={group.label} className="mb-4">
+              <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
+                {group.label}
+              </p>
+              <div className="space-y-0.5">
+                {group.items.map((item) => {
+                  const isComplete = item.completionKey ? completionMap[item.completionKey] : false;
+                  return (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      onClick={onClose}
+                      className={({ isActive }) =>
+                        cn(
+                          'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors',
+                          isActive
+                            ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                            : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                        )
+                      }
+                    >
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      <span className="flex-1">{item.title}</span>
+                      {isComplete && (
+                        <Check className="h-3.5 w-3.5 text-sidebar-primary shrink-0" />
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </div>
+            </div>
           ))}
         </nav>
         <div className="p-4 border-t border-sidebar-border">

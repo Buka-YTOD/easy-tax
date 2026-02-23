@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -146,6 +148,21 @@ export default function Settings() {
               </Button>
             </form>
           </Form>
+        </CardContent>
+      </Card>
+
+      {/* Next step CTA */}
+      <Card className="border-primary/20 bg-primary/5">
+        <CardContent className="py-6 flex items-center justify-between">
+          <div>
+            <p className="font-medium">Next: Start the Guided Interview</p>
+            <p className="text-sm text-muted-foreground">Let our AI walk you through your tax filing step by step.</p>
+          </div>
+          <Link to="/app/guided">
+            <Button>
+              Get Started <ArrowRight className="h-4 w-4 ml-1" />
+            </Button>
+          </Link>
         </CardContent>
       </Card>
     </div>
