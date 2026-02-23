@@ -9,12 +9,12 @@ export default function Login() {
   const navigate = useNavigate();
 
   if (isAuthenticated) {
-    return <Navigate to="/app/dashboard" replace />;
+    return <Navigate to="/app/home" replace />;
   }
 
   const handleContinue = () => {
     login();
-    navigate('/app/dashboard');
+    navigate('/app/home');
   };
 
   return (

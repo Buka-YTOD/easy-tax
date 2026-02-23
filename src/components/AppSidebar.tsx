@@ -1,16 +1,16 @@
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, User, Wallet, TrendingUp, Calculator, FileText, Bot, X } from 'lucide-react';
+import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
-  { title: 'Dashboard', path: '/app/dashboard', icon: LayoutDashboard },
-  { title: 'Tax Profile', path: '/app/tax-profile', icon: User },
-  { title: 'Income', path: '/app/income', icon: Wallet },
-  { title: 'Capital Gains', path: '/app/capital-gains', icon: TrendingUp },
-  { title: 'Compute', path: '/app/compute', icon: Calculator },
+  { title: 'Home', path: '/app/home', icon: Home },
+  { title: 'Guided Interview', path: '/app/guided', icon: Sparkles },
+  { title: 'Review', path: '/app/review', icon: ClipboardCheck },
+  { title: 'Result', path: '/app/result', icon: BarChart3 },
   { title: 'Filing Pack', path: '/app/filing-pack', icon: FileText },
-  { title: 'AI Assistant', path: '/app/ai-assistant', icon: Bot },
+  { title: 'Manual Mode', path: '/app/manual', icon: Wrench },
+  { title: 'Settings', path: '/app/settings', icon: Settings },
 ];
 
 interface AppSidebarProps {
