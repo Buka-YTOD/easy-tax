@@ -10,9 +10,10 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export function AppLayout() {
-  const { isAuthenticated, user, logout, selectedTaxYear, setSelectedTaxYear } = useAppContext();
+  const { isAuthenticated, isLoading, profile, logout, selectedTaxYear, setSelectedTaxYear } = useAppContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  if (isLoading) return null;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
 
   return (
@@ -38,10 +39,10 @@ export function AppLayout() {
             </Select>
             <Avatar className="h-8 w-8">
               <AvatarFallback className="bg-primary text-primary-foreground text-xs font-medium">
-                {user?.fullName
+                {profile?.full_name
                   ?.split(' ')
-                  .map((n) => n[0])
-                  .join('')}
+                  .map((n: string) => n[0])
+                  .join('') || '?'}
               </AvatarFallback>
             </Avatar>
             <Button variant="ghost" size="icon" onClick={logout} title="Logout">
