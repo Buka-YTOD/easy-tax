@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider } from "@/contexts/AppContext";
 import { AppLayout } from "@/components/AppLayout";
 import Login from "./pages/Login";
+import Payment from "./pages/Payment";
 import Home from "./pages/Home";
 import Guided from "./pages/Guided";
 import Review from "./pages/Review";
@@ -34,6 +35,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/payment" element={<Payment />} />
             <Route path="/app" element={<AppLayout />}>
               <Route index element={<Navigate to="home" replace />} />
               <Route path="home" element={<Home />} />

@@ -1,20 +1,29 @@
 import { useState } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAppContext } from '@/contexts/AppContext';
+import { useSubscription } from '@/hooks/useSubscription';
 import { AppSidebar } from '@/components/AppSidebar';
 import { FlowProgressBar } from '@/components/FlowProgressBar';
 import { MobileBottomNav } from '@/components/MobileBottomNav';
-import { Menu, LogOut } from 'lucide-react';
+import { Menu, LogOut, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 export function AppLayout() {
   const { isAuthenticated, isLoading, profile, logout, selectedTaxYear, setSelectedTaxYear } = useAppContext();
+  const { isActive: subscriptionActive, loading: subLoading } = useSubscription();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  if (isLoading) return null;
+  if (isLoading || subLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
   if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (!subscriptionActive) return <Navigate to="/payment" replace />;
 
   return (
     <div className="flex h-screen bg-background">
