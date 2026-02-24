@@ -1,27 +1,25 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import type { User, Session } from '@supabase/supabase-js';
 
-interface User {
+interface Profile {
   id: string;
-  email: string;
-  fullName: string;
+  user_id: string;
+  full_name: string;
+  avatar_url: string | null;
 }
 
 interface AppContextType {
   selectedTaxYear: number;
   setSelectedTaxYear: (year: number) => void;
   user: User | null;
+  profile: Profile | null;
   isAuthenticated: boolean;
-  login: () => void;
-  logout: () => void;
+  isLoading: boolean;
+  logout: () => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
-
-const MOCK_USER: User = {
-  id: 'usr_001',
-  email: 'adebayo@example.com',
-  fullName: 'Adebayo Ogunlesi',
-};
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [selectedTaxYear, setSelectedTaxYear] = useState<number>(() => {
@@ -29,22 +27,59 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return stored ? parseInt(stored, 10) : 2026;
   });
 
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem('isAuthenticated') === 'true';
-  });
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     localStorage.setItem('selectedTaxYear', String(selectedTaxYear));
   }, [selectedTaxYear]);
 
-  const login = () => {
-    setIsAuthenticated(true);
-    localStorage.setItem('isAuthenticated', 'true');
-  };
+  useEffect(() => {
+    // Set up auth listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          // Fetch profile with setTimeout to avoid Supabase auth deadlock
+          setTimeout(async () => {
+            const { data } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('user_id', session.user.id)
+              .single();
+            setProfile(data as Profile | null);
+          }, 0);
+        } else {
+          setProfile(null);
+        }
+        setIsLoading(false);
+      }
+    );
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem('isAuthenticated');
+    // THEN check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single()
+          .then(({ data }) => {
+            setProfile(data as Profile | null);
+            setIsLoading(false);
+          });
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const logout = async () => {
+    await supabase.auth.signOut();
   };
 
   return (
@@ -52,9 +87,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       value={{
         selectedTaxYear,
         setSelectedTaxYear,
-        user: isAuthenticated ? MOCK_USER : null,
-        isAuthenticated,
-        login,
+        user,
+        profile,
+        isAuthenticated: !!user,
+        isLoading,
         logout,
       }}
     >
