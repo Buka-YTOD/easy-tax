@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TaxReturnDocument } from '@/components/TaxReturnDocument';
+import { FilingInstructions } from '@/components/FilingInstructions';
 import { FileText, Download, Printer, Loader2, Calculator, PartyPopper } from 'lucide-react';
 
 export default function FilingPack() {
@@ -132,6 +133,9 @@ th{font-weight:600}
               </p>
             </CardContent>
           </Card>
+
+
+          <FilingInstructions />
         </>
       ) : (
         <Card>
