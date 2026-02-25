@@ -16,6 +16,9 @@ import ManualHub from "./pages/ManualHub";
 import Income from "./pages/Income";
 import CapitalGains from "./pages/CapitalGains";
 import Deductions from "./pages/Deductions";
+import BenefitsInKind from "./pages/BenefitsInKind";
+import AssetDeclarations from "./pages/AssetDeclarations";
+import CapitalAllowances from "./pages/CapitalAllowances";
 import Settings from "./pages/Settings";
 import ImportData from "./pages/ImportData";
 import TaxOptimizer from "./pages/TaxOptimizer";
@@ -48,6 +51,9 @@ const App = () => (
               <Route path="manual/income" element={<Income />} />
               <Route path="manual/capital-gains" element={<CapitalGains />} />
               <Route path="manual/deductions" element={<Deductions />} />
+              <Route path="manual/benefits-in-kind" element={<BenefitsInKind />} />
+              <Route path="manual/asset-declarations" element={<AssetDeclarations />} />
+              <Route path="manual/capital-allowances" element={<CapitalAllowances />} />
               <Route path="settings" element={<Settings />} />
               <Route path="import" element={<ImportData />} />
               <Route path="optimizer" element={<TaxOptimizer />} />
