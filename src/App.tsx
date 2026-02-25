@@ -26,6 +26,7 @@ import YearComparison from "./pages/YearComparison";
 import TaxCalendar from "./pages/TaxCalendar";
 import DocumentVault from "./pages/DocumentVault";
 import AdminDashboard from "./pages/AdminDashboard";
+import TaxProfile from "./pages/TaxProfile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="manual/benefits-in-kind" element={<BenefitsInKind />} />
               <Route path="manual/asset-declarations" element={<AssetDeclarations />} />
               <Route path="manual/capital-allowances" element={<CapitalAllowances />} />
+              <Route path="tax-profile" element={<TaxProfile />} />
               <Route path="settings" element={<Settings />} />
               <Route path="import" element={<ImportData />} />
               <Route path="optimizer" element={<TaxOptimizer />} />
