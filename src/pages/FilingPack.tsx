@@ -39,32 +39,34 @@ export default function FilingPack() {
     if (!el) return;
     const html = `<!DOCTYPE html>
 <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tax Return ${selectedTaxYear}</title>
+<title>Form A - Tax Return ${selectedTaxYear}</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,Helvetica,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#111;font-size:14px;line-height:1.5}
+body{font-family:Arial,Helvetica,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#111;font-size:13px;line-height:1.5}
 table{width:100%;border-collapse:collapse}
-th,td{padding:6px 12px;text-align:left;border-bottom:1px solid #ddd;font-size:13px}
-th{font-weight:600}
+th,td{padding:5px 12px;text-align:left;border-bottom:1px solid #ddd;font-size:12px}
+th{font-weight:600;background:#f9fafb}
 td.text-right,th.text-right{text-align:right}
 .font-mono{font-family:'Courier New',monospace}
-.font-bold{font-weight:700}
-.font-medium{font-weight:500}
-.font-semibold{font-weight:600}
-.section-header{background:#f3f4f6;padding:6px 12px;border:1px solid #d1d5db;font-weight:700;text-transform:uppercase;font-size:12px;margin-top:24px;margin-bottom:12px}
+.font-bold{font-weight:700}.font-semibold{font-weight:600}.font-medium{font-weight:500}
+section{margin-bottom:20px}
+section>div:first-child{background:#f3f4f6;padding:6px 12px;border:1px solid #d1d5db;margin-bottom:12px;display:flex;align-items:baseline;gap:8px}
+section>div:first-child span{background:#000;color:#fff;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700}
+section>div:first-child h3{font-weight:700;text-transform:uppercase;font-size:11px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 32px}
+.grid>div{display:flex;flex-direction:column;padding:0 12px}
+.grid>div>span:first-child{font-size:10px;color:#6b7280;text-transform:uppercase}
+.grid>div>span:last-child{font-weight:500;font-size:12px;border-bottom:1px dotted #d1d5db;padding-bottom:4px;margin-top:2px}
 .text-center{text-align:center}
-.text-xs{font-size:11px}.text-sm{font-size:13px}
-.text-gray-500{color:#6b7280}.text-gray-600{color:#4b5563}
-.border-b-2{border-bottom:2px solid #000}.border-t-2{border-top:2px solid #000}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 32px}
-.field-row .label{font-size:11px;color:#6b7280}.field-row .value{font-weight:500}
-.summary-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #e5e7eb}
-.total-row{border-top:2px solid #000;font-weight:700;font-size:16px;padding:8px 0;display:flex;justify-content:space-between}
-.footer{border-top:2px solid #000;padding-top:16px;margin-top:32px;font-size:11px;color:#6b7280}
-.mb-4{margin-bottom:16px}.mb-6{margin-bottom:24px}.mt-2{margin-top:8px}.mt-4{margin-top:16px}.pb-4{padding-bottom:16px}.px-3{padding-left:12px;padding-right:12px}.py-1\\.5{padding-top:6px;padding-bottom:6px}
+.text-right{text-align:right}
 .italic{font-style:italic}
-.uppercase{text-transform:uppercase}.tracking-wide{letter-spacing:0.05em}
-@media(max-width:640px){.grid{grid-template-columns:1fr}table{font-size:12px}th,td{padding:4px 8px}}
+.uppercase{text-transform:uppercase}
+.border-t-2{border-top:2px solid #000}
+.border-b-2{border-bottom:2px solid #000}
+.bg-green-50\\/50{background:rgba(240,253,244,0.5)}
+div[style]{margin:0}
+@media(max-width:640px){.grid{grid-template-columns:1fr}.hidden{display:none!important}}
+@media print{body{margin:20px}}
 </style></head><body>${el.innerHTML}</body></html>`;
     const blob = new Blob([html], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
