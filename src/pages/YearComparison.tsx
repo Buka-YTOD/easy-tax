@@ -1,31 +1,86 @@
-import { getStoredList, getStoredItem } from '@/lib/mock-data';
-import type { IncomeRecord, TaxComputation } from '@/types/tax';
-import type { DeductionRecord } from '@/types/guided';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAppContext } from '@/contexts/AppContext';
 import { formatNaira } from '@/lib/format';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, Loader2 } from 'lucide-react';
 
 const YEARS = [2024, 2025, 2026];
 
-function getYearData(year: number) {
-  const income = getStoredList<IncomeRecord>(`income_${year}`);
-  const deductions = getStoredList<DeductionRecord>(`deductions_${year}`);
-  const computation = getStoredItem<TaxComputation>(`computation_${year}`);
+interface YearData {
+  year: string;
+  income: number;
+  deductions: number;
+  taxOwed: number;
+  hasComputation: boolean;
+}
 
-  const totalIncome = income.reduce((s, r) => {
-    if (r.frequency === 'Monthly') return s + r.amount * 12;
-    return s + r.amount;
-  }, 0);
-  const totalDeductions = deductions.reduce((s, r) => s + r.amount, 0);
+function useYearComparison() {
+  const { user } = useAppContext();
 
-  return {
-    year: `TY ${year}`,
-    income: totalIncome,
-    deductions: totalDeductions,
-    taxOwed: computation?.taxOwed || 0,
-    hasComputation: !!computation,
-  };
+  return useQuery({
+    queryKey: ['yearComparison', user?.id],
+    queryFn: async (): Promise<YearData[]> => {
+      if (!user) return [];
+
+      // Get all returns for the user
+      const { data: returns } = await supabase
+        .from('tax_returns')
+        .select('id, tax_year')
+        .eq('user_id', user.id)
+        .in('tax_year', YEARS);
+
+      if (!returns || returns.length === 0) return YEARS.map(y => ({ year: `TY ${y}`, income: 0, deductions: 0, taxOwed: 0, hasComputation: false }));
+
+      // Get active scenarios for each return
+      const returnIds = returns.map(r => r.id);
+      const { data: scenarios } = await supabase
+        .from('return_scenarios')
+        .select('id, return_id, is_active')
+        .in('return_id', returnIds)
+        .eq('is_active', true);
+
+      const scenarioMap = new Map((scenarios ?? []).map(s => [s.return_id, s.id]));
+
+      const results: YearData[] = [];
+      for (const year of YEARS) {
+        const ret = returns.find(r => r.tax_year === year);
+        if (!ret) {
+          results.push({ year: `TY ${year}`, income: 0, deductions: 0, taxOwed: 0, hasComputation: false });
+          continue;
+        }
+        const scenarioId = scenarioMap.get(ret.id);
+        if (!scenarioId) {
+          results.push({ year: `TY ${year}`, income: 0, deductions: 0, taxOwed: 0, hasComputation: false });
+          continue;
+        }
+
+        const [incomeRes, deductionRes, compRes] = await Promise.all([
+          supabase.from('income_records').select('amount, frequency').eq('scenario_id', scenarioId),
+          supabase.from('deductions').select('amount').eq('scenario_id', scenarioId),
+          supabase.from('computations').select('tax_owed').eq('scenario_id', scenarioId).maybeSingle(),
+        ]);
+
+        const totalIncome = (incomeRes.data ?? []).reduce((s, r) => {
+          if (r.frequency === 'Monthly') return s + Number(r.amount) * 12;
+          return s + Number(r.amount);
+        }, 0);
+        const totalDeductions = (deductionRes.data ?? []).reduce((s, r) => s + Number(r.amount), 0);
+
+        results.push({
+          year: `TY ${year}`,
+          income: totalIncome,
+          deductions: totalDeductions,
+          taxOwed: compRes.data ? Number(compRes.data.tax_owed) : 0,
+          hasComputation: !!compRes.data,
+        });
+      }
+
+      return results;
+    },
+    enabled: !!user,
+  });
 }
 
 function TrendIcon({ current, previous }: { current: number; previous: number }) {
@@ -35,8 +90,16 @@ function TrendIcon({ current, previous }: { current: number; previous: number })
 }
 
 export default function YearComparison() {
-  const data = YEARS.map(getYearData);
+  const { data = [], isLoading } = useYearComparison();
   const hasAnyData = data.some(d => d.income > 0 || d.taxOwed > 0);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
@@ -55,7 +118,6 @@ export default function YearComparison() {
         </Card>
       ) : (
         <>
-          {/* Summary cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {data.map((d, i) => (
               <Card key={d.year}>
@@ -78,7 +140,6 @@ export default function YearComparison() {
             ))}
           </div>
 
-          {/* Chart */}
           <Card>
             <CardHeader><CardTitle className="text-base">Income vs Tax</CardTitle></CardHeader>
             <CardContent>
@@ -102,7 +163,6 @@ export default function YearComparison() {
             </CardContent>
           </Card>
 
-          {/* Details table */}
           <Card>
             <CardHeader><CardTitle className="text-base">Detailed Breakdown</CardTitle></CardHeader>
             <CardContent>

@@ -1,11 +1,12 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X, Check, Upload, Lightbulb, TrendingUp, CalendarDays, FolderOpen } from 'lucide-react';
+import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X, Check, Upload, Lightbulb, TrendingUp, CalendarDays, FolderOpen, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useTaxProfile } from '@/hooks/useTaxProfile';
 import { useIncome } from '@/hooks/useIncome';
 import { useComputation } from '@/hooks/useComputation';
 import { useFilingPack } from '@/hooks/useFilingPack';
+import { useIsAdmin } from '@/hooks/useAdmin';
 
 const navGroups = [
   {
@@ -52,6 +53,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
   const { data: income = [] } = useIncome();
   const { data: computation } = useComputation();
   const { data: filingPack } = useFilingPack();
+  const { data: isAdmin } = useIsAdmin();
 
   const completionMap: Record<string, boolean> = {
     profile: !!profile?.stateOfResidence,
@@ -109,6 +111,28 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
               </div>
             </div>
           ))}
+          {isAdmin && (
+            <div className="mb-3">
+              <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
+                ADMIN
+              </p>
+              <NavLink
+                to="/app/admin"
+                onClick={onClose}
+                className={({ isActive }) =>
+                  cn(
+                    'flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors',
+                    isActive
+                      ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
+                      : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
+                  )
+                }
+              >
+                <ShieldCheck className="h-4 w-4 shrink-0" />
+                <span>Admin Dashboard</span>
+              </NavLink>
+            </div>
+          )}
         </nav>
         <div className="p-4 border-t border-sidebar-border">
           <p className="text-xs text-sidebar-foreground/50">Nigerian Tax Act 2026</p>

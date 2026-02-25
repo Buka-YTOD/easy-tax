@@ -22,6 +22,7 @@ import TaxOptimizer from "./pages/TaxOptimizer";
 import YearComparison from "./pages/YearComparison";
 import TaxCalendar from "./pages/TaxCalendar";
 import DocumentVault from "./pages/DocumentVault";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +54,7 @@ const App = () => (
               <Route path="comparison" element={<YearComparison />} />
               <Route path="calendar" element={<TaxCalendar />} />
               <Route path="documents" element={<DocumentVault />} />
+              <Route path="admin" element={<AdminDashboard />} />
             </Route>
             <Route path="/" element={<Navigate to="/app/home" replace />} />
             <Route path="*" element={<NotFound />} />
