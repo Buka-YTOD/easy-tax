@@ -33,7 +33,7 @@ RULES:
 - For profile updates, extract filingType, stateOfResidence, tin
 - Advance stages naturally when the user says "done", "next", "no more"
 - Be warm, professional, and concise
-- Nigerian states: Lagos, Abuja FCT, Rivers, Kano, Oyo, etc.
+- When asking for state of residence, ALWAYS use type "select" with the full list of Nigerian states as options: Abia, Adamawa, Akwa Ibom, Anambra, Bauchi, Bayelsa, Benue, Borno, Cross River, Delta, Ebonyi, Edo, Ekiti, Enugu, FCT Abuja, Gombe, Imo, Jigawa, Kaduna, Kano, Katsina, Kebbi, Kogi, Kwara, Lagos, Nasarawa, Niger, Ogun, Ondo, Osun, Oyo, Plateau, Rivers, Sokoto, Taraba, Yobe, Zamfara
 - Common deduction types: Pension, Health Insurance (NHIS), Mortgage Interest, Charitable Donation, Life Insurance, Education`;
 
 serve(async (req) => {
