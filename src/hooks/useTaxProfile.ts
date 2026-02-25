@@ -13,6 +13,17 @@ function mapRow(row: any): TaxProfile {
     tin: row.tin,
     filingType: row.filing_type,
     isResident: row.is_resident,
+    maritalStatus: row.marital_status || 'Single',
+    spouseName: row.spouse_name || '',
+    numChildren: row.num_children || 0,
+    dateOfBirth: row.date_of_birth || null,
+    sex: row.sex || '',
+    employerName: row.employer_name || '',
+    employerAddress: row.employer_address || '',
+    employerTin: row.employer_tin || '',
+    occupation: row.occupation || '',
+    residentialAddress: row.residential_address || '',
+    lga: row.lga || '',
   };
 }
 
@@ -62,6 +73,17 @@ export function useUpdateTaxProfile() {
             tin: data.tin,
             filing_type: data.filingType,
             is_resident: data.isResident,
+            marital_status: data.maritalStatus,
+            spouse_name: data.spouseName,
+            num_children: data.numChildren,
+            date_of_birth: data.dateOfBirth || null,
+            sex: data.sex,
+            employer_name: data.employerName,
+            employer_address: data.employerAddress,
+            employer_tin: data.employerTin,
+            occupation: data.occupation,
+            residential_address: data.residentialAddress,
+            lga: data.lga,
           })
           .eq('id', existing.id)
           .select()
@@ -78,6 +100,17 @@ export function useUpdateTaxProfile() {
             tin: data.tin ?? '',
             filing_type: data.filingType ?? 'Individual',
             is_resident: data.isResident ?? true,
+            marital_status: data.maritalStatus ?? 'Single',
+            spouse_name: data.spouseName ?? '',
+            num_children: data.numChildren ?? 0,
+            date_of_birth: data.dateOfBirth || null,
+            sex: data.sex ?? '',
+            employer_name: data.employerName ?? '',
+            employer_address: data.employerAddress ?? '',
+            employer_tin: data.employerTin ?? '',
+            occupation: data.occupation ?? '',
+            residential_address: data.residentialAddress ?? '',
+            lga: data.lga ?? '',
           })
           .select()
           .single();

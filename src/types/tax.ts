@@ -12,6 +12,50 @@ export interface TaxProfile {
   tin: string;
   filingType: FilingType;
   isResident: boolean;
+  // Extended personal particulars (Form A Part A)
+  maritalStatus: string;
+  spouseName: string;
+  numChildren: number;
+  dateOfBirth: string | null;
+  sex: string;
+  employerName: string;
+  employerAddress: string;
+  employerTin: string;
+  occupation: string;
+  residentialAddress: string;
+  lga: string;
+}
+
+export interface BenefitInKind {
+  id: string;
+  scenarioId: string;
+  userId: string;
+  category: string;
+  description: string | null;
+  annualValue: number;
+}
+
+export interface AssetDeclaration {
+  id: string;
+  scenarioId: string;
+  userId: string;
+  assetType: string;
+  description: string | null;
+  location: string;
+  dateAcquired: string | null;
+  cost: number;
+  currentValue: number;
+}
+
+export interface CapitalAllowance {
+  id: string;
+  scenarioId: string;
+  userId: string;
+  assetDescription: string;
+  cost: number;
+  ratePercent: number;
+  allowanceAmount: number;
+  yearAcquired: number | null;
 }
 
 export interface IncomeRecord {

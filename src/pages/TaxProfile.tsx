@@ -53,7 +53,7 @@ export default function TaxProfile() {
 
   const onSubmit = async (data: TaxProfileForm) => {
     try {
-      await updateProfile.mutateAsync(data);
+      await updateProfile.mutateAsync({ ...profile, ...data });
       toast({ title: 'Profile saved', description: 'Your tax profile has been updated.' });
     } catch {
       toast({ title: 'Error', description: 'Failed to save profile.', variant: 'destructive' });
