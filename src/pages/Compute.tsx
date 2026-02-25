@@ -65,10 +65,55 @@ export default function Compute() {
             </Card>
           </div>
 
+          {/* CRA Breakdown */}
+          {breakdown?.cra && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Consolidated Relief Allowance (CRA)</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Gross Income</span>
+                  <span className="font-mono font-medium">{formatNaira(breakdown.grossIncome)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">(a) 1% of Gross Income</span>
+                  <span className="font-mono">{formatNaira(breakdown.cra.onePercent)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">(b) ₦200,000 statutory minimum</span>
+                  <span className="font-mono">{formatNaira(breakdown.cra.statutory)}</span>
+                </div>
+                <div className="flex justify-between font-medium">
+                  <span>Higher of (a) and (b)</span>
+                  <span className="font-mono">{formatNaira(breakdown.cra.base)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">(c) 20% of Gross Income</span>
+                  <span className="font-mono">{formatNaira(breakdown.cra.twentyPercent)}</span>
+                </div>
+                <div className="flex justify-between pt-2 border-t font-bold">
+                  <span>CRA Total</span>
+                  <span className="font-mono">{formatNaira(breakdown.cra.total)}</span>
+                </div>
+                {breakdown.deductionsTotal > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Statutory Deductions</span>
+                    <span className="font-mono">{formatNaira(breakdown.deductionsTotal)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between pt-2 border-t font-bold text-primary">
+                  <span>Taxable Income (Gross − Deductions − CRA)</span>
+                  <span className="font-mono">{formatNaira(computation.taxableIncome)}</span>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {breakdown?.brackets && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Tax Bracket Breakdown</CardTitle>
+                <CardTitle className="text-lg">Progressive Tax Brackets — 2026</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
                 <Table>
@@ -82,7 +127,7 @@ export default function Compute() {
                   </TableHeader>
                   <TableBody>
                     {breakdown.brackets.map((b: { bracket: string; rate: number; taxableAmount: number; tax: number }, i: number) => (
-                      <TableRow key={i}>
+                      <TableRow key={i} className={b.taxableAmount > 0 ? 'bg-primary/5' : ''}>
                         <TableCell className="font-medium text-sm">{b.bracket}</TableCell>
                         <TableCell>{(b.rate * 100).toFixed(0)}%</TableCell>
                         <TableCell>{formatNaira(b.taxableAmount)}</TableCell>
@@ -91,6 +136,18 @@ export default function Compute() {
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          )}
+
+          {breakdown?.monthlyPAYE !== undefined && (
+            <Card className="border-primary/20 bg-primary/5">
+              <CardContent className="pt-6 flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Monthly PAYE Deduction</p>
+                  <p className="text-xl font-bold text-primary">{formatNaira(breakdown.monthlyPAYE)}</p>
+                </div>
+                <p className="text-xs text-muted-foreground">Annual: {formatNaira(computation.taxOwed)}</p>
               </CardContent>
             </Card>
           )}
