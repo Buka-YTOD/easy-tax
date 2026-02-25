@@ -4,29 +4,39 @@ import { useAppContext } from '@/contexts/AppContext';
 import { useTaxReturn } from './useTaxReturn';
 import type { TaxComputation } from '@/types/tax';
 
+// 2026 Nigerian Tax Act progressive brackets
 const TAX_BRACKETS = [
-  { min: 0, max: 800_000, rate: 0 },
-  { min: 800_001, max: 3_200_000, rate: 0.15 },
-  { min: 3_200_001, max: 12_000_000, rate: 0.18 },
-  { min: 12_000_001, max: 25_000_000, rate: 0.21 },
-  { min: 25_000_001, max: Infinity, rate: 0.25 },
+  { lower: 0, upper: 800_000, rate: 0 },
+  { lower: 800_000, upper: 3_200_000, rate: 0.15 },
+  { lower: 3_200_000, upper: 12_000_000, rate: 0.18 },
+  { lower: 12_000_000, upper: 25_000_000, rate: 0.21 },
+  { lower: 25_000_000, upper: Infinity, rate: 0.25 },
 ];
 
-function computeProgressiveTax(totalIncome: number) {
-  let remaining = totalIncome;
-  let taxOwed = 0;
+/**
+ * Consolidated Relief Allowance (CRA) — Nigerian Tax Act 2026
+ * CRA = Higher of (1% of gross income OR ₦200,000) + 20% of gross income
+ */
+function computeCRA(grossIncome: number) {
+  const onePercent = grossIncome * 0.01;
+  const statutory = 200_000;
+  const craBase = Math.max(onePercent, statutory);
+  const twentyPercent = grossIncome * 0.20;
+  const cra = craBase + twentyPercent;
+  return { cra, craBase, onePercent, statutory, twentyPercent };
+}
+
+function computeProgressiveTax(taxableIncome: number) {
   const brackets: Array<{ bracket: string; taxableAmount: number; rate: number; tax: number }> = [];
+  let taxOwed = 0;
 
   for (const b of TAX_BRACKETS) {
-    if (remaining <= 0) break;
-    const bracketWidth = b.max === Infinity ? remaining : b.max - b.min + 1;
-    const taxable = Math.min(remaining, bracketWidth);
-    const tax = taxable * b.rate;
+    const taxableInBracket = Math.max(0, Math.min(taxableIncome, b.upper) - b.lower);
+    const tax = taxableInBracket * b.rate;
     taxOwed += tax;
-    remaining -= taxable;
     brackets.push({
-      bracket: `₦${b.min.toLocaleString()} – ${b.max === Infinity ? '∞' : '₦' + b.max.toLocaleString()}`,
-      taxableAmount: taxable,
+      bracket: `₦${b.lower.toLocaleString()} – ${b.upper === Infinity ? '∞' : '₦' + b.upper.toLocaleString()}`,
+      taxableAmount: taxableInBracket,
       rate: b.rate,
       tax,
     });
@@ -108,12 +118,19 @@ export function useComputeTax() {
         0
       );
 
-      const totalIncome = incomeTotal + Math.max(0, gainsTotal);
-      const taxableIncome = Math.max(0, totalIncome - deductionsTotal);
+      const grossIncome = incomeTotal + Math.max(0, gainsTotal);
+
+      // Apply CRA (Consolidated Relief Allowance)
+      const { cra, craBase, onePercent, statutory, twentyPercent } = computeCRA(grossIncome);
+
+      // Taxable income = Gross Income - Statutory Deductions - CRA
+      const taxableIncome = Math.max(0, grossIncome - deductionsTotal - cra);
       const { taxOwed, brackets } = computeProgressiveTax(taxableIncome);
 
       const breakdownJson = {
         brackets,
+        grossIncome,
+        cra: { total: cra, base: craBase, onePercent, statutory, twentyPercent },
         incomeByType: (incomes ?? []).reduce((acc: Record<string, number>, r) => {
           acc[r.type] = (acc[r.type] || 0) + (r.frequency === 'Monthly' ? Number(r.amount) * 12 : Number(r.amount));
           return acc;
@@ -124,6 +141,7 @@ export function useComputeTax() {
           acc[r.type] = (acc[r.type] || 0) + Number(r.amount);
           return acc;
         }, {}),
+        monthlyPAYE: taxOwed / 12,
       };
 
       // Upsert: check if computation exists for this scenario
@@ -138,7 +156,7 @@ export function useComputeTax() {
         const { data, error } = await supabase
           .from('computations')
           .update({
-            total_income: totalIncome,
+            total_income: grossIncome,
             taxable_income: taxableIncome,
             tax_owed: taxOwed,
             breakdown_json: breakdownJson,
@@ -155,7 +173,7 @@ export function useComputeTax() {
           .insert({
             scenario_id: scenarioId,
             user_id: user.id,
-            total_income: totalIncome,
+            total_income: grossIncome,
             taxable_income: taxableIncome,
             tax_owed: taxOwed,
             breakdown_json: breakdownJson,
