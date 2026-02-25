@@ -104,12 +104,12 @@ export default function Settings() {
     try {
       const filePath = `${user.id}/avatar_${Date.now()}.${file.name.split('.').pop()}`;
       const { error: uploadErr } = await supabase.storage
-        .from('documents')
+        .from('avatars')
         .upload(filePath, file, { upsert: true });
       if (uploadErr) throw uploadErr;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('documents')
+        .from('avatars')
         .getPublicUrl(filePath);
 
       const { error: dbErr } = await supabase
