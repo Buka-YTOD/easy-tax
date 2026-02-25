@@ -1,18 +1,20 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTaxProfile, useUpdateTaxProfile } from '@/hooks/useTaxProfile';
 import { useAppContext } from '@/contexts/AppContext';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 const NIGERIAN_STATES = [
   'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno',
@@ -32,10 +34,21 @@ const settingsSchema = z.object({
 type SettingsForm = z.infer<typeof settingsSchema>;
 
 export default function Settings() {
-  const { selectedTaxYear, setSelectedTaxYear } = useAppContext();
+  const { selectedTaxYear, setSelectedTaxYear, profile: userProfile, user } = useAppContext();
   const { data: profile, isLoading } = useTaxProfile();
   const updateProfile = useUpdateTaxProfile();
   const { toast } = useToast();
+
+  const [fullName, setFullName] = useState(userProfile?.full_name || '');
+  const [phoneNumber, setPhoneNumber] = useState(userProfile?.phone_number || '');
+  const [profileSaving, setProfileSaving] = useState(false);
+
+  useEffect(() => {
+    if (userProfile) {
+      setFullName(userProfile.full_name || '');
+      setPhoneNumber(userProfile.phone_number || '');
+    }
+  }, [userProfile]);
 
   const form = useForm<SettingsForm>({
     resolver: zodResolver(settingsSchema),
@@ -62,6 +75,23 @@ export default function Settings() {
     }
   };
 
+  const handleProfileSave = async () => {
+    if (!user) return;
+    setProfileSaving(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ full_name: fullName, phone_number: phoneNumber || null })
+        .eq('user_id', user.id);
+      if (error) throw error;
+      toast({ title: 'Profile updated!' });
+    } catch {
+      toast({ title: 'Error updating profile', variant: 'destructive' });
+    } finally {
+      setProfileSaving(false);
+    }
+  };
+
   if (isLoading) {
     return <div className="animate-pulse space-y-4"><div className="h-8 bg-muted rounded w-48" /><div className="h-64 bg-muted rounded" /></div>;
   }
@@ -72,6 +102,39 @@ export default function Settings() {
         <h1 className="text-2xl font-bold">Settings</h1>
         <p className="text-muted-foreground">Configure your tax year and profile</p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <User className="h-4 w-4" /> Your Profile
+          </CardTitle>
+          <CardDescription>Your personal information</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-4 mb-2">
+            <Avatar className="h-14 w-14">
+              <AvatarFallback className="bg-primary text-primary-foreground text-lg font-medium">
+                {fullName?.split(' ').map((n: string) => n[0]).join('') || '?'}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <p className="font-medium">{fullName || 'No name set'}</p>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Full Name</label>
+            <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your full name" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Phone Number</label>
+            <Input value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} placeholder="+234..." />
+          </div>
+          <Button onClick={handleProfileSave} disabled={profileSaving}>
+            {profileSaving ? 'Saving...' : 'Update Profile'}
+          </Button>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader>
