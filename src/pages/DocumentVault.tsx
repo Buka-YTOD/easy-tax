@@ -9,7 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { Upload, FileText, Trash2, File, Search, Tag, Loader2 } from 'lucide-react';
+import { DocumentExtractor } from '@/components/DocumentExtractor';
+import { Upload, FileText, Trash2, File, Search, Tag, Loader2, Sparkles } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const CATEGORIES = ['Income Proof', 'Deduction Receipt', 'Capital Gain', 'Tax Certificate', 'ID Document', 'Other'];
@@ -30,6 +31,7 @@ export default function DocumentVault() {
   const [filterCategory, setFilterCategory] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('Other');
   const [uploading, setUploading] = useState(false);
+  const [extractDocId, setExtractDocId] = useState<string | null>(null);
 
   const returnId = returnData?.taxReturn?.id;
 
@@ -201,23 +203,50 @@ export default function DocumentVault() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{doc.file_name}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
+                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                       <Badge variant="outline" className="text-[10px]">{meta?.category || 'Other'}</Badge>
+                      {doc.status === 'extracted' && (
+                        <Badge variant="secondary" className="text-[10px] gap-0.5">
+                          <Sparkles className="h-2.5 w-2.5" /> Scanned
+                        </Badge>
+                      )}
                       {meta?.size && <span className="text-[10px] text-muted-foreground">{formatFileSize(meta.size)}</span>}
                     </div>
                     <p className="text-[10px] text-muted-foreground mt-0.5">
                       {new Date(doc.created_at).toLocaleDateString()}
                     </p>
                   </div>
-                  <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setDeleteId(doc.id)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" title="Scan with AI" onClick={() => setExtractDocId(doc.id)}>
+                      <Sparkles className="h-4 w-4 text-primary" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setDeleteId(doc.id)}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             );
           })}
         </div>
       )}
+
+      {extractDocId && (() => {
+        const doc = docs.find(d => d.id === extractDocId);
+        if (!doc) return null;
+        return (
+          <DocumentExtractor
+            documentId={doc.id}
+            filePath={doc.file_path}
+            fileName={doc.file_name}
+            fileType={doc.file_type}
+            onClose={() => {
+              setExtractDocId(null);
+              queryClient.invalidateQueries({ queryKey: ['documents', returnId] });
+            }}
+          />
+        );
+      })()}
 
       <ConfirmDialog
         open={!!deleteId}
