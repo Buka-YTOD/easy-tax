@@ -69,7 +69,8 @@ export default function Settings() {
 
   const onSubmit = async (data: SettingsForm) => {
     try {
-      await updateProfile.mutateAsync(data);
+      // Spread existing profile to preserve extended fields
+      await updateProfile.mutateAsync({ ...profile, ...data });
       toast({ title: 'Settings saved!' });
     } catch {
       toast({ title: 'Error saving', variant: 'destructive' });

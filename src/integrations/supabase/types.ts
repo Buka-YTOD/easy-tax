@@ -14,6 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
+      asset_declarations: {
+        Row: {
+          asset_type: string
+          cost: number
+          created_at: string
+          current_value: number
+          date_acquired: string | null
+          description: string | null
+          id: string
+          location: string
+          scenario_id: string
+          user_id: string
+        }
+        Insert: {
+          asset_type?: string
+          cost?: number
+          created_at?: string
+          current_value?: number
+          date_acquired?: string | null
+          description?: string | null
+          id?: string
+          location?: string
+          scenario_id: string
+          user_id: string
+        }
+        Update: {
+          asset_type?: string
+          cost?: number
+          created_at?: string
+          current_value?: number
+          date_acquired?: string | null
+          description?: string | null
+          id?: string
+          location?: string
+          scenario_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_declarations_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: false
+            referencedRelation: "return_scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      benefits_in_kind: {
+        Row: {
+          annual_value: number
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          scenario_id: string
+          user_id: string
+        }
+        Insert: {
+          annual_value?: number
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          scenario_id: string
+          user_id: string
+        }
+        Update: {
+          annual_value?: number
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          scenario_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "benefits_in_kind_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: false
+            referencedRelation: "return_scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      capital_allowances: {
+        Row: {
+          allowance_amount: number
+          asset_description: string
+          cost: number
+          created_at: string
+          id: string
+          rate_percent: number
+          scenario_id: string
+          user_id: string
+          year_acquired: number | null
+        }
+        Insert: {
+          allowance_amount?: number
+          asset_description?: string
+          cost?: number
+          created_at?: string
+          id?: string
+          rate_percent?: number
+          scenario_id: string
+          user_id: string
+          year_acquired?: number | null
+        }
+        Update: {
+          allowance_amount?: number
+          asset_description?: string
+          cost?: number
+          created_at?: string
+          id?: string
+          rate_percent?: number
+          scenario_id?: string
+          user_id?: string
+          year_acquired?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "capital_allowances_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: false
+            referencedRelation: "return_scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       capital_gains: {
         Row: {
           asset_type: string
@@ -429,10 +558,21 @@ export type Database = {
       tax_profiles: {
         Row: {
           created_at: string
+          date_of_birth: string | null
+          employer_address: string
+          employer_name: string
+          employer_tin: string
           filing_type: string
           id: string
           is_resident: boolean
+          lga: string
+          marital_status: string
+          num_children: number
+          occupation: string
+          residential_address: string
           return_id: string
+          sex: string
+          spouse_name: string
           state_of_residence: string
           tin: string
           updated_at: string
@@ -440,10 +580,21 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          date_of_birth?: string | null
+          employer_address?: string
+          employer_name?: string
+          employer_tin?: string
           filing_type?: string
           id?: string
           is_resident?: boolean
+          lga?: string
+          marital_status?: string
+          num_children?: number
+          occupation?: string
+          residential_address?: string
           return_id: string
+          sex?: string
+          spouse_name?: string
           state_of_residence?: string
           tin?: string
           updated_at?: string
@@ -451,10 +602,21 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          date_of_birth?: string | null
+          employer_address?: string
+          employer_name?: string
+          employer_tin?: string
           filing_type?: string
           id?: string
           is_resident?: boolean
+          lga?: string
+          marital_status?: string
+          num_children?: number
+          occupation?: string
+          residential_address?: string
           return_id?: string
+          sex?: string
+          spouse_name?: string
           state_of_residence?: string
           tin?: string
           updated_at?: string
