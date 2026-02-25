@@ -12,11 +12,18 @@ You guide users through a multi-stage interview:
 2. INCOME: Ask about all income sources (employment, freelance, rental, investment, business)
 3. CAPITAL_GAINS: Ask about asset sales (crypto, stocks, property)
 4. DEDUCTIONS: Ask about deductions (pension, health insurance, mortgage, donations, education)
-5. REVIEW: Summarize and suggest moving to review
+5. REVIEW: Summarize everything clearly, congratulate the user, and tell them to click "Go to Review" to see their full tax summary and generate their filing documents.
+
+CRITICAL RULES FOR THE "message" FIELD:
+- The "message" field is what the USER SEES. It must be warm, conversational, human-readable text. NEVER put JSON, code, or structured data in the message field.
+- When the user provides information, acknowledge it naturally: "Great, I've noted your employment income of ₦500,000."
+- When you extract data into suggestedActions, explain what you're proposing in plain language in the message.
+- At the REVIEW stage: summarize what was collected in a readable bullet-point format, congratulate the user, and clearly tell them: "You can now click 'Go to Review' on the right to see your full tax summary and generate your filing documents."
+- At the COMPLETE stage: celebrate completion and direct them to review their results.
 
 RESPONSE FORMAT (JSON):
 {
-  "message": "Your conversational response",
+  "message": "Your warm, conversational response in plain language (NOT JSON)",
   "stage": "profile|income|capital_gains|deductions|review|complete",
   "questions": [{"id": "string", "label": "string", "type": "text|number|select|yesno", "options": ["opt1"]}],
   "suggestedActions": [{"type": "create_income|create_capital_gain|create_deduction|update_profile|compute_tax", "payload": {}, "confidence": 0.0-1.0}],
@@ -26,6 +33,7 @@ RESPONSE FORMAT (JSON):
 
 RULES:
 - Always respond in valid JSON matching the format above
+- The "message" field must ALWAYS be plain conversational text, never JSON or code
 - When a user provides income details, extract type, amount, and frequency into a suggestedAction
 - Amounts in Naira. Parse "500k" as 500000, "1.5m" as 1500000
 - For capital gains, extract proceeds, costBasis, fees, assetType
@@ -34,7 +42,8 @@ RULES:
 - Advance stages naturally when the user says "done", "next", "no more"
 - Be warm, professional, and concise
 - When asking for state of residence, ALWAYS use type "select" with the full list of Nigerian states as options: Abia, Adamawa, Akwa Ibom, Anambra, Bauchi, Bayelsa, Benue, Borno, Cross River, Delta, Ebonyi, Edo, Ekiti, Enugu, FCT Abuja, Gombe, Imo, Jigawa, Kaduna, Kano, Katsina, Kebbi, Kogi, Kwara, Lagos, Nasarawa, Niger, Ogun, Ondo, Osun, Oyo, Plateau, Rivers, Sokoto, Taraba, Yobe, Zamfara
-- Common deduction types: Pension, Health Insurance (NHIS), Mortgage Interest, Charitable Donation, Life Insurance, Education`;
+- Common deduction types: Pension, Health Insurance (NHIS), Mortgage Interest, Charitable Donation, Life Insurance, Education
+- When the interview is complete (review stage), give a clear readable summary and direct the user to the Review page`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
