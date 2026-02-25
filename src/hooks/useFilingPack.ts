@@ -50,12 +50,15 @@ export function useGenerateFilingPack() {
       const returnId = returnData.taxReturn.id;
 
       // Gather full data for the document
-      const [profileRes, computationRes, incomesRes, gainsRes, deductionsRes] = await Promise.all([
+      const [profileRes, computationRes, incomesRes, gainsRes, deductionsRes, bikRes, assetsRes, allowancesRes] = await Promise.all([
         supabase.from('tax_profiles').select('*').eq('return_id', returnId).maybeSingle(),
         supabase.from('computations').select('*').eq('scenario_id', scenarioId).maybeSingle(),
         supabase.from('income_records').select('*').eq('scenario_id', scenarioId),
         supabase.from('capital_gains').select('*').eq('scenario_id', scenarioId),
         supabase.from('deductions').select('*').eq('scenario_id', scenarioId),
+        supabase.from('benefits_in_kind').select('*').eq('scenario_id', scenarioId),
+        supabase.from('asset_declarations').select('*').eq('scenario_id', scenarioId),
+        supabase.from('capital_allowances').select('*').eq('scenario_id', scenarioId),
       ]);
 
       const computation = computationRes.data;
@@ -69,6 +72,17 @@ export function useGenerateFilingPack() {
               tin: profile.tin,
               filingType: profile.filing_type,
               isResident: profile.is_resident,
+              maritalStatus: profile.marital_status,
+              spouseName: profile.spouse_name,
+              numChildren: profile.num_children,
+              dateOfBirth: profile.date_of_birth,
+              sex: profile.sex,
+              employerName: profile.employer_name,
+              employerAddress: profile.employer_address,
+              employerTin: profile.employer_tin,
+              occupation: profile.occupation,
+              residentialAddress: profile.residential_address,
+              lga: profile.lga,
             }
           : null,
         computation: computation
@@ -97,6 +111,26 @@ export function useGenerateFilingPack() {
           type: r.type,
           amount: Number(r.amount),
           description: r.description,
+        })),
+        benefitsInKind: (bikRes.data || []).map((r: any) => ({
+          category: r.category,
+          description: r.description,
+          annualValue: Number(r.annual_value),
+        })),
+        assetDeclarations: (assetsRes.data || []).map((r: any) => ({
+          assetType: r.asset_type,
+          description: r.description,
+          location: r.location,
+          dateAcquired: r.date_acquired,
+          cost: Number(r.cost),
+          currentValue: Number(r.current_value),
+        })),
+        capitalAllowances: (allowancesRes.data || []).map((r: any) => ({
+          assetDescription: r.asset_description,
+          cost: Number(r.cost),
+          ratePercent: Number(r.rate_percent),
+          allowanceAmount: Number(r.allowance_amount),
+          yearAcquired: r.year_acquired,
         })),
         generatedAt: new Date().toISOString(),
       };
