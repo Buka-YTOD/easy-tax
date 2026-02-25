@@ -14,12 +14,189 @@ export type Database = {
   }
   public: {
     Tables: {
+      capital_gains: {
+        Row: {
+          asset_type: string
+          cost_basis: number
+          created_at: string
+          description: string | null
+          fees: number
+          id: string
+          proceeds: number
+          realized_at: string | null
+          scenario_id: string
+          user_id: string
+        }
+        Insert: {
+          asset_type?: string
+          cost_basis?: number
+          created_at?: string
+          description?: string | null
+          fees?: number
+          id?: string
+          proceeds?: number
+          realized_at?: string | null
+          scenario_id: string
+          user_id: string
+        }
+        Update: {
+          asset_type?: string
+          cost_basis?: number
+          created_at?: string
+          description?: string | null
+          fees?: number
+          id?: string
+          proceeds?: number
+          realized_at?: string | null
+          scenario_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "capital_gains_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: false
+            referencedRelation: "return_scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      documents: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_path: string
+          file_type: string | null
+          id: string
+          metadata_json: Json | null
+          return_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_path: string
+          file_type?: string | null
+          id?: string
+          metadata_json?: Json | null
+          return_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          file_type?: string | null
+          id?: string
+          metadata_json?: Json | null
+          return_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "tax_returns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      generated_forms: {
+        Row: {
+          form_type: string
+          generated_at: string
+          id: string
+          scenario_id: string
+          status: string
+          summary_json: Json | null
+          user_id: string
+        }
+        Insert: {
+          form_type?: string
+          generated_at?: string
+          id?: string
+          scenario_id: string
+          status?: string
+          summary_json?: Json | null
+          user_id: string
+        }
+        Update: {
+          form_type?: string
+          generated_at?: string
+          id?: string
+          scenario_id?: string
+          status?: string
+          summary_json?: Json | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_forms_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: false
+            referencedRelation: "return_scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      income_records: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          frequency: string
+          id: string
+          metadata_json: Json | null
+          scenario_id: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          frequency?: string
+          id?: string
+          metadata_json?: Json | null
+          scenario_id: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          frequency?: string
+          id?: string
+          metadata_json?: Json | null
+          scenario_id?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "income_records_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: false
+            referencedRelation: "return_scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           created_at: string
           full_name: string
           id: string
+          phone_number: string | null
           updated_at: string
           user_id: string
         }
@@ -28,6 +205,7 @@ export type Database = {
           created_at?: string
           full_name?: string
           id?: string
+          phone_number?: string | null
           updated_at?: string
           user_id: string
         }
@@ -36,10 +214,49 @@ export type Database = {
           created_at?: string
           full_name?: string
           id?: string
+          phone_number?: string | null
           updated_at?: string
           user_id?: string
         }
         Relationships: []
+      }
+      return_scenarios: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          return_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          return_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          return_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "return_scenarios_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "tax_returns"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subscriptions: {
         Row: {
@@ -78,6 +295,80 @@ export type Database = {
           paystack_reference?: string | null
           plan?: string
           status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      system_flags: {
+        Row: {
+          created_at: string
+          flag_type: string
+          id: string
+          message: string
+          metadata_json: Json | null
+          resolved: boolean
+          resolved_at: string | null
+          return_id: string
+          severity: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          flag_type: string
+          id?: string
+          message: string
+          metadata_json?: Json | null
+          resolved?: boolean
+          resolved_at?: string | null
+          return_id: string
+          severity?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          flag_type?: string
+          id?: string
+          message?: string
+          metadata_json?: Json | null
+          resolved?: boolean
+          resolved_at?: string | null
+          return_id?: string
+          severity?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "system_flags_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: false
+            referencedRelation: "tax_returns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_returns: {
+        Row: {
+          created_at: string
+          id: string
+          status: string
+          tax_year: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status?: string
+          tax_year: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string
+          tax_year?: number
           updated_at?: string
           user_id?: string
         }
