@@ -85,10 +85,13 @@ export function useComputeTax() {
         .select('*')
         .eq('scenario_id', scenarioId);
 
-      const { data: gains } = await supabase
-        .from('capital_gains')
-        .select('*')
-        .eq('scenario_id', scenarioId);
+      const [gainsRes, deductionsRes] = await Promise.all([
+        supabase.from('capital_gains').select('*').eq('scenario_id', scenarioId),
+        supabase.from('deductions').select('*').eq('scenario_id', scenarioId),
+      ]);
+
+      const gains = gainsRes.data;
+      const deductions = deductionsRes.data;
 
       const incomeTotal = (incomes ?? []).reduce((sum, r) => {
         if (r.frequency === 'Monthly') return sum + Number(r.amount) * 12;
@@ -100,8 +103,13 @@ export function useComputeTax() {
         0
       );
 
+      const deductionsTotal = (deductions ?? []).reduce(
+        (sum, r) => sum + Number(r.amount),
+        0
+      );
+
       const totalIncome = incomeTotal + Math.max(0, gainsTotal);
-      const taxableIncome = totalIncome;
+      const taxableIncome = Math.max(0, totalIncome - deductionsTotal);
       const { taxOwed, brackets } = computeProgressiveTax(taxableIncome);
 
       const breakdownJson = {
@@ -111,6 +119,11 @@ export function useComputeTax() {
           return acc;
         }, {}),
         capitalGainsTotal: gainsTotal,
+        deductionsTotal,
+        deductionsByType: (deductions ?? []).reduce((acc: Record<string, number>, r) => {
+          acc[r.type] = (acc[r.type] || 0) + Number(r.amount);
+          return acc;
+        }, {}),
       };
 
       // Upsert: check if computation exists for this scenario
