@@ -1,4 +1,1 @@
 project_id = "sexytdrodaecarvsvxgc"
-
-[functions.paystack]
-verify_jwt = false
