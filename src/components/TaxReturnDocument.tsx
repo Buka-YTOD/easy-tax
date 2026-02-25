@@ -9,14 +9,14 @@ export function TaxReturnDocument({ data }: TaxReturnDocumentProps) {
 
   const profile = data.profile;
   const computation = data.computation;
-  const incomes = data.incomeRecords || [];
-  const gains = data.capitalGains || [];
-  const deductions = data.deductions || [];
+  const incomes = Array.isArray(data.incomeRecords) ? data.incomeRecords : [];
+  const gains = Array.isArray(data.capitalGains) ? data.capitalGains : [];
+  const deductions = Array.isArray(data.deductions) ? data.deductions : [];
   const formType = profile?.filingType === 'Business' ? 'Form H' : 'Form A';
 
-  const totalIncome = incomes.reduce((s: number, r: any) => s + r.amount, 0);
-  const totalGains = gains.reduce((s: number, r: any) => s + r.gain, 0);
-  const totalDeductions = deductions.reduce((s: number, r: any) => s + r.amount, 0);
+  const totalIncome = incomes.reduce((s: number, r: any) => s + (r.amount || 0), 0);
+  const totalGains = gains.reduce((s: number, r: any) => s + (r.gain || 0), 0);
+  const totalDeductions = deductions.reduce((s: number, r: any) => s + (r.amount || 0), 0);
 
   return (
     <div className="print:m-0 print:shadow-none bg-white text-black" id="tax-return-document">
