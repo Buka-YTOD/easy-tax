@@ -61,6 +61,47 @@ export type Database = {
           },
         ]
       }
+      computations: {
+        Row: {
+          breakdown_json: Json | null
+          computed_at: string
+          id: string
+          scenario_id: string
+          tax_owed: number
+          taxable_income: number
+          total_income: number
+          user_id: string
+        }
+        Insert: {
+          breakdown_json?: Json | null
+          computed_at?: string
+          id?: string
+          scenario_id: string
+          tax_owed?: number
+          taxable_income?: number
+          total_income?: number
+          user_id: string
+        }
+        Update: {
+          breakdown_json?: Json | null
+          computed_at?: string
+          id?: string
+          scenario_id?: string
+          tax_owed?: number
+          taxable_income?: number
+          total_income?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "computations_scenario_id_fkey"
+            columns: ["scenario_id"]
+            isOneToOne: true
+            referencedRelation: "return_scenarios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deductions: {
         Row: {
           amount: number
@@ -380,6 +421,50 @@ export type Database = {
             foreignKeyName: "system_flags_return_id_fkey"
             columns: ["return_id"]
             isOneToOne: false
+            referencedRelation: "tax_returns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tax_profiles: {
+        Row: {
+          created_at: string
+          filing_type: string
+          id: string
+          is_resident: boolean
+          return_id: string
+          state_of_residence: string
+          tin: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          filing_type?: string
+          id?: string
+          is_resident?: boolean
+          return_id: string
+          state_of_residence?: string
+          tin?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          filing_type?: string
+          id?: string
+          is_resident?: boolean
+          return_id?: string
+          state_of_residence?: string
+          tin?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_profiles_return_id_fkey"
+            columns: ["return_id"]
+            isOneToOne: true
             referencedRelation: "tax_returns"
             referencedColumns: ["id"]
           },

@@ -1,7 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { useAppContext } from '@/contexts/AppContext';
-import { getStoredItem, setStoredItem, getStoredList } from '@/lib/mock-data';
-import type { TaxComputation, IncomeRecord, CapitalGainRecord } from '@/types/tax';
+import { useTaxReturn } from './useTaxReturn';
+import type { TaxComputation } from '@/types/tax';
 
 const TAX_BRACKETS = [
   { min: 0, max: 800_000, rate: 0 },
@@ -34,53 +35,125 @@ function computeProgressiveTax(totalIncome: number) {
   return { taxOwed, brackets };
 }
 
+function mapRow(row: any): TaxComputation {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    taxYear: 0,
+    totalIncome: Number(row.total_income),
+    taxableIncome: Number(row.taxable_income),
+    taxOwed: Number(row.tax_owed),
+    breakdownJson: typeof row.breakdown_json === 'string' ? row.breakdown_json : JSON.stringify(row.breakdown_json),
+    computedAt: row.computed_at,
+  };
+}
+
 export function useComputation() {
   const { selectedTaxYear } = useAppContext();
+  const { data: returnData } = useTaxReturn();
+  const scenarioId = returnData?.activeScenario?.id;
+
   return useQuery({
-    queryKey: ['computation', selectedTaxYear],
-    queryFn: () => getStoredItem<TaxComputation>(`computation_${selectedTaxYear}`),
+    queryKey: ['computation', selectedTaxYear, scenarioId],
+    queryFn: async (): Promise<TaxComputation | null> => {
+      if (!scenarioId) return null;
+      const { data, error } = await supabase
+        .from('computations')
+        .select('*')
+        .eq('scenario_id', scenarioId)
+        .maybeSingle();
+      if (error) throw error;
+      return data ? mapRow(data) : null;
+    },
+    enabled: !!scenarioId,
   });
 }
 
 export function useComputeTax() {
-  const { selectedTaxYear } = useAppContext();
+  const { user, selectedTaxYear } = useAppContext();
+  const { data: returnData } = useTaxReturn();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
-      const incomes = getStoredList<IncomeRecord>(`income_${selectedTaxYear}`);
-      const gains = getStoredList<CapitalGainRecord>(`capitalGains_${selectedTaxYear}`);
+      if (!user || !returnData?.activeScenario) throw new Error('No active scenario');
+      const scenarioId = returnData.activeScenario.id;
 
-      const incomeTotal = incomes.reduce((sum, r) => {
-        if (r.frequency === 'Monthly') return sum + r.amount * 12;
-        return sum + r.amount;
+      // Fetch income and capital gains from DB
+      const { data: incomes } = await supabase
+        .from('income_records')
+        .select('*')
+        .eq('scenario_id', scenarioId);
+
+      const { data: gains } = await supabase
+        .from('capital_gains')
+        .select('*')
+        .eq('scenario_id', scenarioId);
+
+      const incomeTotal = (incomes ?? []).reduce((sum, r) => {
+        if (r.frequency === 'Monthly') return sum + Number(r.amount) * 12;
+        return sum + Number(r.amount);
       }, 0);
 
-      const gainsTotal = gains.reduce((sum, r) => sum + (r.proceeds - r.costBasis - r.fees), 0);
+      const gainsTotal = (gains ?? []).reduce(
+        (sum, r) => sum + (Number(r.proceeds) - Number(r.cost_basis) - Number(r.fees)),
+        0
+      );
+
       const totalIncome = incomeTotal + Math.max(0, gainsTotal);
       const taxableIncome = totalIncome;
       const { taxOwed, brackets } = computeProgressiveTax(taxableIncome);
 
-      const computation: TaxComputation = {
-        id: crypto.randomUUID(),
-        userId: 'usr_001',
-        taxYear: selectedTaxYear,
-        totalIncome,
-        taxableIncome,
-        taxOwed,
-        breakdownJson: JSON.stringify({
-          brackets,
-          incomeByType: incomes.reduce((acc, r) => {
-            acc[r.type] = (acc[r.type] || 0) + (r.frequency === 'Monthly' ? r.amount * 12 : r.amount);
-            return acc;
-          }, {} as Record<string, number>),
-          capitalGainsTotal: gainsTotal,
-        }),
-        computedAt: new Date().toISOString(),
+      const breakdownJson = {
+        brackets,
+        incomeByType: (incomes ?? []).reduce((acc: Record<string, number>, r) => {
+          acc[r.type] = (acc[r.type] || 0) + (r.frequency === 'Monthly' ? Number(r.amount) * 12 : Number(r.amount));
+          return acc;
+        }, {}),
+        capitalGainsTotal: gainsTotal,
       };
 
-      setStoredItem(`computation_${selectedTaxYear}`, computation);
-      return computation;
+      // Upsert: check if computation exists for this scenario
+      const { data: existing } = await supabase
+        .from('computations')
+        .select('id')
+        .eq('scenario_id', scenarioId)
+        .maybeSingle();
+
+      let row;
+      if (existing) {
+        const { data, error } = await supabase
+          .from('computations')
+          .update({
+            total_income: totalIncome,
+            taxable_income: taxableIncome,
+            tax_owed: taxOwed,
+            breakdown_json: breakdownJson,
+            computed_at: new Date().toISOString(),
+          })
+          .eq('id', existing.id)
+          .select()
+          .single();
+        if (error) throw error;
+        row = data;
+      } else {
+        const { data, error } = await supabase
+          .from('computations')
+          .insert({
+            scenario_id: scenarioId,
+            user_id: user.id,
+            total_income: totalIncome,
+            taxable_income: taxableIncome,
+            tax_owed: taxOwed,
+            breakdown_json: breakdownJson,
+          })
+          .select()
+          .single();
+        if (error) throw error;
+        row = data;
+      }
+
+      return mapRow(row);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['computation', selectedTaxYear] });
