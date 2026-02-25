@@ -3,11 +3,17 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAppContext } from '@/contexts/AppContext';
 
 export function useSubscription() {
-  const { user, isAuthenticated } = useAppContext();
+  const { user, isAuthenticated, isLoading: authLoading } = useAppContext();
   const [isActive, setIsActive] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Don't make any decisions until auth has finished loading
+    if (authLoading) {
+      setLoading(true);
+      return;
+    }
+
     if (!isAuthenticated || !user) {
       setLoading(false);
       setIsActive(false);
@@ -42,7 +48,7 @@ export function useSubscription() {
     };
 
     check();
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, authLoading]);
 
   return { isActive, loading };
 }
