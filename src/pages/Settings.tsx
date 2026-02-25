@@ -14,7 +14,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 const NIGERIAN_STATES = [
   'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno',
@@ -42,6 +42,7 @@ export default function Settings() {
   const [fullName, setFullName] = useState(userProfile?.full_name || '');
   const [phoneNumber, setPhoneNumber] = useState(userProfile?.phone_number || '');
   const [profileSaving, setProfileSaving] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   useEffect(() => {
     if (userProfile) {
@@ -92,6 +93,40 @@ export default function Settings() {
     }
   };
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast({ title: 'Image too large (max 2MB)', variant: 'destructive' });
+      return;
+    }
+    setAvatarUploading(true);
+    try {
+      const filePath = `${user.id}/avatar_${Date.now()}.${file.name.split('.').pop()}`;
+      const { error: uploadErr } = await supabase.storage
+        .from('documents')
+        .upload(filePath, file, { upsert: true });
+      if (uploadErr) throw uploadErr;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('documents')
+        .getPublicUrl(filePath);
+
+      const { error: dbErr } = await supabase
+        .from('profiles')
+        .update({ avatar_url: publicUrl })
+        .eq('user_id', user.id);
+      if (dbErr) throw dbErr;
+
+      toast({ title: 'Profile photo updated!' });
+      window.location.reload();
+    } catch {
+      toast({ title: 'Failed to upload photo', variant: 'destructive' });
+    } finally {
+      setAvatarUploading(false);
+    }
+  };
+
   if (isLoading) {
     return <div className="animate-pulse space-y-4"><div className="h-8 bg-muted rounded w-48" /><div className="h-64 bg-muted rounded" /></div>;
   }
@@ -112,11 +147,18 @@ export default function Settings() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4 mb-2">
-            <Avatar className="h-14 w-14">
-              <AvatarFallback className="bg-primary text-primary-foreground text-lg font-medium">
-                {fullName?.split(' ').map((n: string) => n[0]).join('') || '?'}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative group">
+              <Avatar className="h-14 w-14">
+                <AvatarImage src={userProfile?.avatar_url || undefined} alt={fullName} />
+                <AvatarFallback className="bg-primary text-primary-foreground text-lg font-medium">
+                  {fullName?.split(' ').map((n: string) => n[0]).join('') || '?'}
+                </AvatarFallback>
+              </Avatar>
+              <label className="absolute inset-0 flex items-center justify-center bg-foreground/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                <span className="text-[10px] text-white font-medium">{avatarUploading ? '...' : 'Edit'}</span>
+                <input type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} disabled={avatarUploading} />
+              </label>
+            </div>
             <div>
               <p className="font-medium">{fullName || 'No name set'}</p>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
