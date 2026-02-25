@@ -1,49 +1,18 @@
 import { useState, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAppContext } from '@/contexts/AppContext';
+import { useTaxReturn } from '@/hooks/useTaxReturn';
 import { useToast } from '@/hooks/use-toast';
-import { getStoredList, setStoredList } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { Upload, FileText, Trash2, Image, File, Search, Plus, Tag } from 'lucide-react';
+import { Upload, FileText, Trash2, File, Search, Tag, Loader2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-interface StoredDocument {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  category: string;
-  dataUrl: string;
-  addedAt: string;
-  notes: string;
-}
-
 const CATEGORIES = ['Income Proof', 'Deduction Receipt', 'Capital Gain', 'Tax Certificate', 'ID Document', 'Other'];
-
-function useDocuments() {
-  const key = 'document_vault';
-  const [docs, setDocs] = useState<StoredDocument[]>(() => getStoredList<StoredDocument>(key));
-
-  const addDoc = useCallback((doc: StoredDocument) => {
-    setDocs(prev => {
-      const updated = [...prev, doc];
-      setStoredList(key, updated);
-      return updated;
-    });
-  }, []);
-
-  const removeDoc = useCallback((id: string) => {
-    setDocs(prev => {
-      const updated = prev.filter(d => d.id !== id);
-      setStoredList(key, updated);
-      return updated;
-    });
-  }, []);
-
-  return { docs, addDoc, removeDoc };
-}
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -52,71 +21,116 @@ function formatFileSize(bytes: number): string {
 }
 
 export default function DocumentVault() {
-  const { docs, addDoc, removeDoc } = useDocuments();
+  const { user } = useAppContext();
+  const { data: returnData } = useTaxReturn();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [selectedCategory, setSelectedCategory] = useState('Other');
+  const [uploading, setUploading] = useState(false);
 
-  const handleUpload = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
+  const returnId = returnData?.taxReturn?.id;
 
-    Array.from(files).forEach(file => {
-      if (file.size > 5 * 1024 * 1024) {
-        toast({ title: `${file.name} is too large (max 5MB)`, variant: 'destructive' });
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const doc: StoredDocument = {
-          id: crypto.randomUUID(),
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          category: selectedCategory,
-          dataUrl: ev.target?.result as string,
-          addedAt: new Date().toISOString(),
-          notes: '',
-        };
-        addDoc(doc);
-        toast({ title: `${file.name} uploaded` });
-      };
-      reader.readAsDataURL(file);
-    });
-
-    e.target.value = '';
-  }, [addDoc, toast, selectedCategory]);
-
-  const handleDelete = () => {
-    if (deleteId) {
-      removeDoc(deleteId);
-      setDeleteId(null);
-      toast({ title: 'Document removed' });
-    }
-  };
-
-  const filtered = docs.filter(d => {
-    if (filterCategory !== 'all' && d.category !== filterCategory) return false;
-    if (search && !d.name.toLowerCase().includes(search.toLowerCase())) return false;
-    return true;
+  // Fetch documents from DB
+  const { data: docs = [], isLoading } = useQuery({
+    queryKey: ['documents', returnId],
+    queryFn: async () => {
+      if (!returnId) return [];
+      const { data, error } = await supabase
+        .from('documents')
+        .select('*')
+        .eq('return_id', returnId)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!returnId,
   });
 
-  const isImage = (type: string) => type.startsWith('image/');
+  // Upload file to storage + insert DB row
+  const handleUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || !user || !returnId) return;
+
+    setUploading(true);
+    for (const file of Array.from(files)) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast({ title: `${file.name} is too large (max 10MB)`, variant: 'destructive' });
+        continue;
+      }
+
+      const filePath = `${user.id}/${crypto.randomUUID()}_${file.name}`;
+
+      const { error: uploadErr } = await supabase.storage
+        .from('documents')
+        .upload(filePath, file);
+
+      if (uploadErr) {
+        toast({ title: `Failed to upload ${file.name}`, variant: 'destructive' });
+        continue;
+      }
+
+      const { error: dbErr } = await supabase
+        .from('documents')
+        .insert({
+          user_id: user.id,
+          return_id: returnId,
+          file_name: file.name,
+          file_path: filePath,
+          file_type: file.type || null,
+          status: 'uploaded',
+          metadata_json: { category: selectedCategory, size: file.size },
+        });
+
+      if (dbErr) {
+        toast({ title: `Failed to save ${file.name}`, variant: 'destructive' });
+      } else {
+        toast({ title: `${file.name} uploaded` });
+      }
+    }
+
+    queryClient.invalidateQueries({ queryKey: ['documents', returnId] });
+    setUploading(false);
+    e.target.value = '';
+  }, [user, returnId, selectedCategory, toast, queryClient]);
+
+  // Delete
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const doc = docs.find(d => d.id === id);
+      if (!doc) return;
+      await supabase.storage.from('documents').remove([doc.file_path]);
+      const { error } = await supabase.from('documents').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documents', returnId] });
+      setDeleteId(null);
+      toast({ title: 'Document removed' });
+    },
+  });
+
+  const filtered = docs.filter(d => {
+    const meta = d.metadata_json as any;
+    const cat = meta?.category || 'Other';
+    if (filterCategory !== 'all' && cat !== filterCategory) return false;
+    if (search && !d.file_name.toLowerCase().includes(search.toLowerCase())) return false;
+    return true;
+  });
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Document Vault</h1>
-        <p className="text-muted-foreground">Store receipts and documents for your tax records</p>
+        <p className="text-muted-foreground">Store receipts and documents securely in the cloud</p>
       </div>
 
-      {/* Upload area */}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Upload Documents</CardTitle>
-          <CardDescription>Images, PDFs, and documents up to 5MB each. Stored locally on your device.</CardDescription>
+          <CardDescription>Images, PDFs, and documents up to 10MB each.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex items-center gap-3">
@@ -131,15 +145,20 @@ export default function DocumentVault() {
             </Select>
           </div>
           <label className="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
-            <Upload className="h-6 w-6 text-muted-foreground mb-1" />
-            <span className="text-sm text-muted-foreground">Click to upload files</span>
-            <span className="text-xs text-muted-foreground/60">PDF, images, documents</span>
-            <input type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" className="hidden" onChange={handleUpload} />
+            {uploading ? (
+              <Loader2 className="h-6 w-6 animate-spin text-primary" />
+            ) : (
+              <>
+                <Upload className="h-6 w-6 text-muted-foreground mb-1" />
+                <span className="text-sm text-muted-foreground">Click to upload files</span>
+                <span className="text-xs text-muted-foreground/60">PDF, images, documents</span>
+              </>
+            )}
+            <input type="file" multiple accept="image/*,.pdf,.doc,.docx,.xls,.xlsx" className="hidden" onChange={handleUpload} disabled={uploading} />
           </label>
         </CardContent>
       </Card>
 
-      {/* Filter / search */}
       {docs.length > 0 && (
         <div className="flex items-center gap-3">
           <div className="relative flex-1">
@@ -158,8 +177,9 @@ export default function DocumentVault() {
         </div>
       )}
 
-      {/* Document list */}
-      {filtered.length === 0 ? (
+      {isLoading ? (
+        <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
+      ) : filtered.length === 0 ? (
         <Card>
           <CardContent className="py-12 text-center">
             <FileText className="h-12 w-12 mx-auto text-muted-foreground/30" />
@@ -171,32 +191,31 @@ export default function DocumentVault() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {filtered.map(doc => (
-            <Card key={doc.id} className="group">
-              <CardContent className="py-3 flex items-center gap-3">
-                <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center shrink-0 overflow-hidden">
-                  {isImage(doc.type) ? (
-                    <img src={doc.dataUrl} alt={doc.name} className="h-full w-full object-cover rounded-lg" />
-                  ) : (
+          {filtered.map(doc => {
+            const meta = doc.metadata_json as any;
+            return (
+              <Card key={doc.id} className="group">
+                <CardContent className="py-3 flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center shrink-0">
                     <File className="h-5 w-5 text-muted-foreground" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{doc.name}</p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <Badge variant="outline" className="text-[10px]">{doc.category}</Badge>
-                    <span className="text-[10px] text-muted-foreground">{formatFileSize(doc.size)}</span>
                   </div>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">
-                    {new Date(doc.addedAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setDeleteId(doc.id)}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{doc.file_name}</p>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <Badge variant="outline" className="text-[10px]">{meta?.category || 'Other'}</Badge>
+                      {meta?.size && <span className="text-[10px] text-muted-foreground">{formatFileSize(meta.size)}</span>}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">
+                      {new Date(doc.created_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => setDeleteId(doc.id)}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
 
@@ -204,8 +223,8 @@ export default function DocumentVault() {
         open={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
         title="Delete Document"
-        description="Remove this document from your vault? This cannot be undone."
-        onConfirm={handleDelete}
+        description="Remove this document? This cannot be undone."
+        onConfirm={() => deleteId && deleteMutation.mutate(deleteId)}
       />
     </div>
   );
