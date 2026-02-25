@@ -14,6 +14,9 @@ export function useSubscription() {
       return;
     }
 
+    // Reset loading when auth state changes to prevent flash redirect
+    setLoading(true);
+
     const check = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
