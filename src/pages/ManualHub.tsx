@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Wallet, TrendingUp, Receipt, ArrowRight, Wrench } from 'lucide-react';
+import { Wallet, TrendingUp, Receipt, Gift, Landmark, Calculator, ArrowRight, Wrench } from 'lucide-react';
 
 const sections = [
   { title: 'Income Records', desc: 'Add and manage your income sources', icon: Wallet, path: '/app/manual/income' },
   { title: 'Capital Gains', desc: 'Track asset sales and gains', icon: TrendingUp, path: '/app/manual/capital-gains' },
   { title: 'Deductions', desc: 'Manage your tax deductions', icon: Receipt, path: '/app/manual/deductions' },
+  { title: 'Benefits in Kind', desc: 'Non-cash benefits from employer (Part C)', icon: Gift, path: '/app/manual/benefits-in-kind' },
+  { title: 'Asset Declarations', desc: 'Declare owned assets (Part D)', icon: Landmark, path: '/app/manual/asset-declarations' },
+  { title: 'Capital Allowances', desc: 'Claim depreciation on business assets (Part E)', icon: Calculator, path: '/app/manual/capital-allowances' },
 ];
 
 export default function ManualHub() {
