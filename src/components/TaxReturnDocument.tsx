@@ -111,7 +111,7 @@ export function TaxReturnDocument({ data }: TaxReturnDocumentProps) {
       <FormSection partLabel="A" title="Personal Particulars of Taxpayer">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
           <FormField label="1. Tax Identification Number (TIN)" value={profile?.tin || '—'} />
-          <FormField label="2. Full Name" value={data.fullName || profile?.employerName || '—'} />
+          <FormField label="2. Full Name" value={data.fullName || '—'} />
           <FormField label="3. Sex" value={profile?.sex || '—'} />
           <FormField label="4. Date of Birth" value={profile?.dateOfBirth ? formatDate(profile.dateOfBirth) : '—'} />
           <FormField label="5. Marital Status" value={profile?.maritalStatus || '—'} />
