@@ -181,7 +181,7 @@ export default function FilingPack() {
                   <div ref={h1Ref}>
                     <FormH1Document data={summaryData} />
                   </div>
-                  <div ref={h2Ref}>
+                  <div ref={h2Ref} className="pdf-page-break-before">
                     <FormH2Document data={summaryData} />
                   </div>
                 </>
