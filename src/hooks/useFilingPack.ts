@@ -64,8 +64,16 @@ export function useGenerateFilingPack() {
       const computation = computationRes.data;
       const profile = profileRes.data;
 
+      // Fetch user's full name from profiles
+      const { data: userProfile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
       const summary = {
         taxYear: selectedTaxYear,
+        fullName: userProfile?.full_name || '',
         profile: profile
           ? {
               stateOfResidence: profile.state_of_residence,
