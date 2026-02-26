@@ -118,7 +118,15 @@ export default function FilingPack() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 relative">
+      {isExporting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-3 rounded-xl border bg-card p-8 shadow-lg">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-sm font-medium text-muted-foreground">Generating PDF…</p>
+          </div>
+        </div>
+      )}
       <div className="flex items-center justify-between print:hidden">
         <div>
           <h1 className="text-2xl font-bold">
