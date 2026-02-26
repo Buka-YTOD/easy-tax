@@ -73,6 +73,25 @@ export function ChatPanel({ messages, isLoading, onSend, onConfirmAction, confir
             >
               <p className="whitespace-pre-wrap">{msg.content}</p>
 
+              {msg.role === 'assistant' && isLatestAssistant && !isLoading &&
+                (!msg.questions || msg.questions.length === 0) &&
+                /\b(no|done|next|yes)\b/i.test(msg.content) && (
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {/\byes\b/i.test(msg.content) && (
+                    <Button size="sm" variant="outline" onClick={() => onSend('Yes')}>Yes</Button>
+                  )}
+                  {/\bno\b/i.test(msg.content) && (
+                    <Button size="sm" variant="outline" onClick={() => onSend('No')}>No</Button>
+                  )}
+                  {/\bdone\b/i.test(msg.content) && (
+                    <Button size="sm" variant="outline" onClick={() => onSend('Done')}>Done</Button>
+                  )}
+                  {/\bnext\b/i.test(msg.content) && (
+                    <Button size="sm" variant="outline" onClick={() => onSend('Next')}>Next</Button>
+                  )}
+                </div>
+              )}
+
               {msg.role === 'assistant' && msg.questions && msg.questions.length > 0 && isLatestAssistant && (
                 <QuestionRenderer
                   questions={msg.questions}
