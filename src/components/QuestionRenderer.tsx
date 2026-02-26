@@ -5,6 +5,27 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Send } from 'lucide-react';
 
+const NIGERIAN_STATES = [
+  'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno',
+  'Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','FCT Abuja','Gombe',
+  'Imo','Jigawa','Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara','Lagos',
+  'Nasarawa','Niger','Ogun','Ondo','Osun','Oyo','Plateau','Rivers','Sokoto',
+  'Taraba','Yobe','Zamfara',
+];
+
+function isStateQuestion(q: AIQuestion): boolean {
+  const l = (q.label + ' ' + q.id).toLowerCase();
+  return l.includes('state') && (l.includes('residen') || l.includes('operation') || l.includes('nigeria'));
+}
+
+function normalizeQuestion(q: AIQuestion): AIQuestion {
+  if (q.type === 'select' && q.options && q.options.length > 0) return q;
+  if (isStateQuestion(q)) {
+    return { ...q, type: 'select', options: NIGERIAN_STATES };
+  }
+  return q;
+}
+
 interface QuestionRendererProps {
   questions: AIQuestion[];
   onSubmit: (answers: Record<string, string>) => void;
@@ -13,20 +34,21 @@ interface QuestionRendererProps {
 
 export function QuestionRenderer({ questions, onSubmit, disabled }: QuestionRendererProps) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const normalized = questions.map(normalizeQuestion);
 
   const handleSubmit = () => {
-    if (questions.length === 0) return;
-    const allAnswered = questions.every((q) => answers[q.id]?.trim());
+    if (normalized.length === 0) return;
+    const allAnswered = normalized.every((q) => answers[q.id]?.trim());
     if (!allAnswered) return;
     onSubmit(answers);
     setAnswers({});
   };
 
-  if (questions.length === 0) return null;
+  if (normalized.length === 0) return null;
 
   return (
     <div className="space-y-3 mt-3">
-      {questions.map((q) => (
+      {normalized.map((q) => (
         <div key={q.id} className="space-y-1.5">
           <label className="text-sm font-medium text-foreground">{q.label}</label>
           {q.type === 'select' && q.options ? (
@@ -35,7 +57,7 @@ export function QuestionRenderer({ questions, onSubmit, disabled }: QuestionRend
               onValueChange={(v) => setAnswers((prev) => ({ ...prev, [q.id]: v }))}
             >
               <SelectTrigger><SelectValue placeholder="Select..." /></SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-50 bg-popover">
                 {q.options.map((opt) => (
                   <SelectItem key={opt} value={opt}>{opt}</SelectItem>
                 ))}
