@@ -81,9 +81,9 @@ export function ChatPanel({ messages, isLoading, onSend, onConfirmAction, confir
                 />
               )}
 
-              {msg.role === 'assistant' && msg.suggestedActions && msg.suggestedActions.length > 0 && (
+              {msg.role === 'assistant' && msg.suggestedActions && msg.suggestedActions.filter(a => a.type !== 'update_profile').length > 0 && (
                 <ProposedActionsList
-                  actions={msg.suggestedActions}
+                  actions={msg.suggestedActions.filter(a => a.type !== 'update_profile')}
                   onConfirm={onConfirmAction}
                   confirmedIds={confirmedActionIds}
                   isConfirming={isConfirming}
