@@ -7,12 +7,15 @@ const STEPS: { stage: InterviewStage; label: string }[] = [
   { stage: 'income', label: 'Income' },
   { stage: 'capital_gains', label: 'Capital Gains' },
   { stage: 'deductions', label: 'Deductions' },
+  { stage: 'benefits_in_kind', label: 'Benefits in Kind' },
+  { stage: 'asset_declarations', label: 'Assets' },
+  { stage: 'capital_allowances', label: 'Allowances' },
   { stage: 'review', label: 'Review' },
   { stage: 'complete', label: 'Finish' },
 ];
 
 const ORDER: Record<InterviewStage, number> = {
-  profile: 0, income: 1, capital_gains: 2, deductions: 3, review: 4, complete: 5,
+  profile: 0, income: 1, capital_gains: 2, deductions: 3, benefits_in_kind: 4, asset_declarations: 5, capital_allowances: 6, review: 7, complete: 8,
 };
 
 interface StepperProgressProps {
