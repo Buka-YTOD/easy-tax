@@ -16,11 +16,19 @@ function actionLabel(action: SuggestedAction): string {
   const p = action.payload;
   switch (action.type) {
     case 'create_income':
-      return `Add ${p.type || 'Income'}: ${p.amount ? formatNaira(p.amount as number) : ''} ${p.frequency || ''}`.trim();
-    case 'create_capital_gain':
-      return `Add Capital Gain: ${p.assetType || 'Asset'}`;
+      return `Add ${p.type || 'Income'}: ${p.amount ? formatNaira(p.amount as number) : ''} ${p.frequency ? `/${(p.frequency as string).toLowerCase()}` : ''}`.trim();
+    case 'create_capital_gain': {
+      const gain = (p.proceeds as number || 0) - (p.costBasis as number || 0) - (p.fees as number || 0);
+      return `Add Capital Gain (${p.assetType || 'Asset'}): ${formatNaira(gain)} net`;
+    }
     case 'create_deduction':
-      return `Add Deduction: ${p.type || 'Deduction'} ${p.amount ? formatNaira(p.amount as number) : ''}`.trim();
+      return `Add ${p.type || 'Deduction'} Deduction: ${p.amount ? formatNaira(p.amount as number) : ''}`.trim();
+    case 'create_benefit_in_kind':
+      return `Add ${p.category || 'BIK'}: ${p.annualValue ? `${formatNaira(p.annualValue as number)}/year` : ''}`.trim();
+    case 'create_asset_declaration':
+      return `Declare ${p.assetType || 'Asset'}: ${p.currentValue ? formatNaira(p.currentValue as number) : ''} ${p.location ? `in ${p.location}` : ''}`.trim();
+    case 'create_capital_allowance':
+      return `Add Allowance: ${p.assetDescription || 'Asset'} @ ${p.ratePercent || 0}% (${p.cost ? formatNaira(p.cost as number) : ''})`.trim();
     case 'update_profile':
       return `Update Profile: ${Object.entries(p).map(([k, v]) => `${k}=${v}`).join(', ')}`;
     case 'compute_tax':
