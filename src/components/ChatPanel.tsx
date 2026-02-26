@@ -1,23 +1,27 @@
 import { useRef, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import type { GuidedMessage } from '@/types/guided';
+import type { InterviewStage } from '@/types/guided';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { QuestionRenderer } from '@/components/QuestionRenderer';
 import { ProposedActionsList, actionKey } from '@/components/ProposedActionsList';
 import type { SuggestedAction } from '@/types/guided';
-import { Send, Bot, User, HelpCircle, Loader2 } from 'lucide-react';
+import { Send, Bot, User, HelpCircle, Loader2, ArrowRight, PartyPopper } from 'lucide-react';
 
 interface ChatPanelProps {
   messages: GuidedMessage[];
   isLoading: boolean;
+  stage: InterviewStage;
   onSend: (text: string) => void;
   onConfirmAction: (action: SuggestedAction) => void;
   confirmedActionIds: Set<string>;
   isConfirming?: boolean;
 }
 
-export function ChatPanel({ messages, isLoading, onSend, onConfirmAction, confirmedActionIds, isConfirming }: ChatPanelProps) {
+export function ChatPanel({ messages, isLoading, stage, onSend, onConfirmAction, confirmedActionIds, isConfirming }: ChatPanelProps) {
+  const isComplete = stage === 'review' || stage === 'complete';
   const [input, setInput] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -132,33 +136,49 @@ export function ChatPanel({ messages, isLoading, onSend, onConfirmAction, confir
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
+      {/* Input / CTA */}
       <div className="border-t bg-card p-4">
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            className="shrink-0"
-            onClick={() => onSend("I don't know")}
-            disabled={isLoading}
-            title="I don't know"
-          >
-            <HelpCircle className="h-4 w-4" />
-          </Button>
-          <Input
-            placeholder="Type your answer..."
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            disabled={isLoading}
-          />
-          <Button onClick={handleSend} disabled={isLoading || !input.trim()} size="icon" className="shrink-0">
-            <Send className="h-4 w-4" />
-          </Button>
-        </div>
-        <p className="text-[10px] text-muted-foreground mt-2 text-center">
-          ⚠ This is not legal advice. Consult a tax professional for official guidance.
-        </p>
+        {isComplete ? (
+          <div className="flex flex-col items-center gap-3 py-2">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <PartyPopper className="h-4 w-4 text-primary" />
+              <span>Interview complete!</span>
+            </div>
+            <Link to="/app/review" className="w-full">
+              <Button size="lg" className="w-full">
+                Go to Review <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                className="shrink-0"
+                onClick={() => onSend("I don't know")}
+                disabled={isLoading}
+                title="I don't know"
+              >
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+              <Input
+                placeholder="Type your answer..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                disabled={isLoading}
+              />
+              <Button onClick={handleSend} disabled={isLoading || !input.trim()} size="icon" className="shrink-0">
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-2 text-center">
+              ⚠ This is not legal advice. Consult a tax professional for official guidance.
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
