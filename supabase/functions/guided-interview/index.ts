@@ -103,7 +103,13 @@ serve(async (req) => {
     let parsed;
     try {
       // Strip markdown code fences if present
-      const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+      let cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+      // If the content has text before JSON, extract the JSON object
+      const jsonStart = cleaned.indexOf('{');
+      const jsonEnd = cleaned.lastIndexOf('}');
+      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+        cleaned = cleaned.substring(jsonStart, jsonEnd + 1);
+      }
       parsed = JSON.parse(cleaned);
     } catch {
       parsed = {
