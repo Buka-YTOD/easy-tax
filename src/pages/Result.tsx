@@ -5,96 +5,8 @@ import { formatNaira } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/StatCard';
+import { TaxBreakdownVisual } from '@/components/TaxBreakdownVisual';
 import { Calculator, FileText, ArrowRight, Loader2, Wallet, TrendingUp, Receipt, Sparkles } from 'lucide-react';
-
-function BreakdownRow({ label, value, bold, indent }: { label: string; value: string; bold?: boolean; indent?: boolean }) {
-  return (
-    <div className={`flex justify-between py-1.5 text-sm ${bold ? 'font-semibold border-t border-border pt-2' : ''} ${indent ? 'pl-4 text-muted-foreground' : ''}`}>
-      <span>{label}</span>
-      <span className="font-mono">{value}</span>
-    </div>
-  );
-}
-
-function TaxBreakdown({ breakdown }: { breakdown: any }) {
-  const incomeByType = breakdown.incomeByType || {};
-  const deductionsByType = breakdown.deductionsByType || {};
-  const brackets = breakdown.brackets || [];
-  const cra = breakdown.cra || {};
-
-  return (
-    <div className="space-y-6">
-      {/* Income Sources */}
-      {Object.keys(incomeByType).length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wide mb-2">Income Sources</h4>
-          {Object.entries(incomeByType).map(([type, amount]) => (
-            <BreakdownRow key={type} label={type} value={formatNaira(amount as number)} />
-          ))}
-          {breakdown.capitalGainsTotal > 0 && (
-            <BreakdownRow label="Capital Gains" value={formatNaira(breakdown.capitalGainsTotal)} />
-          )}
-          <BreakdownRow label="Gross Income" value={formatNaira(breakdown.grossIncome)} bold />
-        </div>
-      )}
-
-      {/* Deductions */}
-      {(breakdown.deductionsTotal > 0 || Object.keys(deductionsByType).length > 0) && (
-        <div>
-          <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wide mb-2">Statutory Deductions</h4>
-          {Object.entries(deductionsByType).map(([type, amount]) => (
-            <BreakdownRow key={type} label={type} value={formatNaira(amount as number)} />
-          ))}
-          <BreakdownRow label="Total Deductions" value={formatNaira(breakdown.deductionsTotal)} bold />
-        </div>
-      )}
-
-      {/* CRA */}
-      {cra.total > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wide mb-2">Consolidated Relief Allowance (CRA)</h4>
-          <BreakdownRow label="Base Relief (higher of 1% or ₦200,000)" value={formatNaira(cra.base)} indent />
-          <BreakdownRow label="20% of Gross Income" value={formatNaira(cra.twentyPercent)} indent />
-          <BreakdownRow label="Total CRA" value={formatNaira(cra.total)} bold />
-        </div>
-      )}
-
-      {/* Tax Brackets */}
-      {brackets.length > 0 && (
-        <div>
-          <h4 className="text-xs font-semibold uppercase text-muted-foreground tracking-wide mb-2">Tax Calculation</h4>
-          <div className="rounded-lg border overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-muted/50">
-                  <th className="text-left px-3 py-2 font-medium">Bracket</th>
-                  <th className="text-right px-3 py-2 font-medium">Rate</th>
-                  <th className="text-right px-3 py-2 font-medium">Taxable</th>
-                  <th className="text-right px-3 py-2 font-medium">Tax</th>
-                </tr>
-              </thead>
-              <tbody>
-                {brackets.map((b: any, i: number) => (
-                  <tr key={i} className={`border-t border-border ${b.tax > 0 ? 'bg-primary/5' : ''}`}>
-                    <td className="px-3 py-2">{b.bracket}</td>
-                    <td className="px-3 py-2 text-right">{(b.rate * 100).toFixed(0)}%</td>
-                    <td className="px-3 py-2 text-right font-mono">{formatNaira(b.taxableAmount)}</td>
-                    <td className="px-3 py-2 text-right font-mono">{formatNaira(b.tax)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* Monthly PAYE */}
-      {breakdown.monthlyPAYE !== undefined && (
-        <BreakdownRow label="Monthly PAYE" value={formatNaira(breakdown.monthlyPAYE)} bold />
-      )}
-    </div>
-  );
-}
 
 export default function Result() {
   const { data: computation, isLoading } = useComputation();
@@ -173,9 +85,17 @@ export default function Result() {
 
       {breakdown && (
         <Card>
-          <CardHeader><CardTitle className="text-base">How we calculated your tax</CardTitle></CardHeader>
+          <CardHeader>
+            <CardTitle className="text-base">How we calculated your tax</CardTitle>
+            <p className="text-xs text-muted-foreground">Step-by-step breakdown of your 2026 tax computation</p>
+          </CardHeader>
           <CardContent>
-            <TaxBreakdown breakdown={breakdown} />
+            <TaxBreakdownVisual
+              breakdown={breakdown}
+              totalIncome={computation.totalIncome}
+              taxableIncome={computation.taxableIncome}
+              taxOwed={computation.taxOwed}
+            />
           </CardContent>
         </Card>
       )}
