@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TaxReturnDocument } from '@/components/TaxReturnDocument';
 import { FormH1Document } from '@/components/FormH1Document';
+import { FormH2Document } from '@/components/FormH2Document';
 import { FilingInstructions } from '@/components/FilingInstructions';
 import { FileText, Download, Printer, Loader2, Calculator, PartyPopper } from 'lucide-react';
 
@@ -144,7 +145,10 @@ div[style]{margin:0}
           <Card className="print:shadow-none print:border-none">
             <CardContent className="p-6 md:p-10" ref={printRef}>
               {isBusinessFiler ? (
-                <FormH1Document data={summaryData} />
+                <>
+                  <FormH1Document data={summaryData} />
+                  <FormH2Document data={summaryData} />
+                </>
               ) : (
                 <TaxReturnDocument data={summaryData} />
               )}
