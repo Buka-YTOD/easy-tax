@@ -13,6 +13,43 @@ import { FormH2Document } from '@/components/FormH2Document';
 import { FilingInstructions } from '@/components/FilingInstructions';
 import { FileText, Download, Printer, Loader2, Calculator, PartyPopper } from 'lucide-react';
 
+const BASE_STYLES = `*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#111;font-size:13px;line-height:1.5}
+table{width:100%;border-collapse:collapse}
+th,td{padding:5px 12px;text-align:left;border-bottom:1px solid #ddd;font-size:12px}
+th{font-weight:600;background:#f9fafb}
+td.text-right,th.text-right{text-align:right}
+.font-mono{font-family:'Courier New',monospace}
+.font-bold{font-weight:700}.font-semibold{font-weight:600}.font-medium{font-weight:500}
+section{margin-bottom:20px}
+section>div:first-child{background:#f3f4f6;padding:6px 12px;border:1px solid #d1d5db;margin-bottom:12px;display:flex;align-items:baseline;gap:8px}
+section>div:first-child span{background:#000;color:#fff;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700}
+section>div:first-child h3{font-weight:700;text-transform:uppercase;font-size:11px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 32px}
+.grid>div{display:flex;flex-direction:column;padding:0 12px}
+.grid>div>span:first-child{font-size:10px;color:#6b7280;text-transform:uppercase}
+.grid>div>span:last-child{font-weight:500;font-size:12px;border-bottom:1px dotted #d1d5db;padding-bottom:4px;margin-top:2px}
+.text-center{text-align:center}.text-right{text-align:right}
+.italic{font-style:italic}.uppercase{text-transform:uppercase}
+.border-t-2{border-top:2px solid #000}.border-b-2{border-bottom:2px solid #000}
+div[style]{margin:0}
+@media(max-width:640px){.grid{grid-template-columns:1fr}.hidden{display:none!important}}
+@media print{body{margin:20px}}`;
+
+function downloadHTMLFile(content: string, title: string, filename: string) {
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title}</title>
+<style>${BASE_STYLES}</style></head><body>${content}</body></html>`;
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export default function FilingPack() {
   const { selectedTaxYear } = useAppContext();
   const { data: pack } = useFilingPack();
@@ -20,6 +57,8 @@ export default function FilingPack() {
   const generatePack = useGenerateFilingPack();
   const { toast } = useToast();
   const printRef = useRef<HTMLDivElement>(null);
+  const h1Ref = useRef<HTMLDivElement>(null);
+  const h2Ref = useRef<HTMLDivElement>(null);
 
   const handleGenerate = async () => {
     try {
@@ -40,44 +79,21 @@ export default function FilingPack() {
   const handleDownloadHTML = () => {
     const el = printRef.current;
     if (!el) return;
-    const html = `<!DOCTYPE html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Form A - Tax Return ${selectedTaxYear}</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Arial,Helvetica,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#111;font-size:13px;line-height:1.5}
-table{width:100%;border-collapse:collapse}
-th,td{padding:5px 12px;text-align:left;border-bottom:1px solid #ddd;font-size:12px}
-th{font-weight:600;background:#f9fafb}
-td.text-right,th.text-right{text-align:right}
-.font-mono{font-family:'Courier New',monospace}
-.font-bold{font-weight:700}.font-semibold{font-weight:600}.font-medium{font-weight:500}
-section{margin-bottom:20px}
-section>div:first-child{background:#f3f4f6;padding:6px 12px;border:1px solid #d1d5db;margin-bottom:12px;display:flex;align-items:baseline;gap:8px}
-section>div:first-child span{background:#000;color:#fff;padding:2px 6px;border-radius:2px;font-size:10px;font-weight:700}
-section>div:first-child h3{font-weight:700;text-transform:uppercase;font-size:11px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 32px}
-.grid>div{display:flex;flex-direction:column;padding:0 12px}
-.grid>div>span:first-child{font-size:10px;color:#6b7280;text-transform:uppercase}
-.grid>div>span:last-child{font-weight:500;font-size:12px;border-bottom:1px dotted #d1d5db;padding-bottom:4px;margin-top:2px}
-.text-center{text-align:center}
-.text-right{text-align:right}
-.italic{font-style:italic}
-.uppercase{text-transform:uppercase}
-.border-t-2{border-top:2px solid #000}
-.border-b-2{border-bottom:2px solid #000}
-.bg-green-50\\/50{background:rgba(240,253,244,0.5)}
-div[style]{margin:0}
-@media(max-width:640px){.grid{grid-template-columns:1fr}.hidden{display:none!important}}
-@media print{body{margin:20px}}
-</style></head><body>${el.innerHTML}</body></html>`;
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `tax-return-${selectedTaxYear}.html`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const title = isBusinessFiler ? `Form H1 & H2 - ${selectedTaxYear}` : `Form A - Tax Return ${selectedTaxYear}`;
+    const filename = isBusinessFiler ? `form-h1-h2-${selectedTaxYear}.html` : `tax-return-${selectedTaxYear}.html`;
+    downloadHTMLFile(el.innerHTML, title, filename);
+  };
+
+  const handleDownloadH1 = () => {
+    const el = h1Ref.current;
+    if (!el) return;
+    downloadHTMLFile(el.innerHTML, `Form H1 - Employer Declaration ${selectedTaxYear}`, `form-h1-${selectedTaxYear}.html`);
+  };
+
+  const handleDownloadH2 = () => {
+    const el = h2Ref.current;
+    if (!el) return;
+    downloadHTMLFile(el.innerHTML, `Form H2 - Employee Certificate ${selectedTaxYear}`, `form-h2-${selectedTaxYear}.html`);
   };
 
   if (!computation && !pack) {
@@ -135,9 +151,23 @@ div[style]{margin:0}
               <Button variant="outline" size="sm" onClick={handlePrint}>
                 <Printer className="h-4 w-4 mr-1" /> Print / Save PDF
               </Button>
-              <Button variant="outline" size="sm" onClick={handleDownloadHTML}>
-                <Download className="h-4 w-4 mr-1" /> Download
-              </Button>
+              {isBusinessFiler ? (
+                <>
+                  <Button variant="outline" size="sm" onClick={handleDownloadH1}>
+                    <Download className="h-4 w-4 mr-1" /> Form H1
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleDownloadH2}>
+                    <Download className="h-4 w-4 mr-1" /> Form H2
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleDownloadHTML}>
+                    <Download className="h-4 w-4 mr-1" /> Both
+                  </Button>
+                </>
+              ) : (
+                <Button variant="outline" size="sm" onClick={handleDownloadHTML}>
+                  <Download className="h-4 w-4 mr-1" /> Download
+                </Button>
+              )}
             </div>
           </div>
 
@@ -146,8 +176,12 @@ div[style]{margin:0}
             <CardContent className="p-6 md:p-10" ref={printRef}>
               {isBusinessFiler ? (
                 <>
-                  <FormH1Document data={summaryData} />
-                  <FormH2Document data={summaryData} />
+                  <div ref={h1Ref}>
+                    <FormH1Document data={summaryData} />
+                  </div>
+                  <div ref={h2Ref}>
+                    <FormH2Document data={summaryData} />
+                  </div>
                 </>
               ) : (
                 <TaxReturnDocument data={summaryData} />
