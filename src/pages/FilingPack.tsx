@@ -11,7 +11,8 @@ import { TaxReturnDocument } from '@/components/TaxReturnDocument';
 import { FormH1Document } from '@/components/FormH1Document';
 import { FormH2Document } from '@/components/FormH2Document';
 import { FilingInstructions } from '@/components/FilingInstructions';
-import { FileText, Download, Printer, Loader2, Calculator, PartyPopper } from 'lucide-react';
+import { FileText, Download, Printer, Loader2, Calculator, PartyPopper, FileDown } from 'lucide-react';
+import { usePdfExport } from '@/hooks/usePdfExport';
 
 const BASE_STYLES = `*{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,Helvetica,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#111;font-size:13px;line-height:1.5}
@@ -59,6 +60,7 @@ export default function FilingPack() {
   const printRef = useRef<HTMLDivElement>(null);
   const h1Ref = useRef<HTMLDivElement>(null);
   const h2Ref = useRef<HTMLDivElement>(null);
+  const { exportToPdf, isExporting } = usePdfExport();
 
   const handleGenerate = async () => {
     try {
@@ -149,23 +151,23 @@ export default function FilingPack() {
             </span>
             <div className="ml-auto flex gap-2">
               <Button variant="outline" size="sm" onClick={handlePrint}>
-                <Printer className="h-4 w-4 mr-1" /> Print / Save PDF
+                <Printer className="h-4 w-4 mr-1" /> Print
               </Button>
               {isBusinessFiler ? (
                 <>
-                  <Button variant="outline" size="sm" onClick={handleDownloadH1}>
-                    <Download className="h-4 w-4 mr-1" /> Form H1
+                  <Button variant="outline" size="sm" onClick={() => h1Ref.current && exportToPdf(h1Ref.current, `form-h1-${selectedTaxYear}.pdf`)} disabled={isExporting}>
+                    <FileDown className="h-4 w-4 mr-1" /> H1 PDF
                   </Button>
-                  <Button variant="outline" size="sm" onClick={handleDownloadH2}>
-                    <Download className="h-4 w-4 mr-1" /> Form H2
+                  <Button variant="outline" size="sm" onClick={() => h2Ref.current && exportToPdf(h2Ref.current, `form-h2-${selectedTaxYear}.pdf`)} disabled={isExporting}>
+                    <FileDown className="h-4 w-4 mr-1" /> H2 PDF
                   </Button>
-                  <Button variant="outline" size="sm" onClick={handleDownloadHTML}>
-                    <Download className="h-4 w-4 mr-1" /> Both
+                  <Button variant="outline" size="sm" onClick={() => printRef.current && exportToPdf(printRef.current, `form-h1-h2-${selectedTaxYear}.pdf`)} disabled={isExporting}>
+                    <FileDown className="h-4 w-4 mr-1" /> Both PDF
                   </Button>
                 </>
               ) : (
-                <Button variant="outline" size="sm" onClick={handleDownloadHTML}>
-                  <Download className="h-4 w-4 mr-1" /> Download
+                <Button variant="outline" size="sm" onClick={() => printRef.current && exportToPdf(printRef.current, `tax-return-${selectedTaxYear}.pdf`)} disabled={isExporting}>
+                  <FileDown className="h-4 w-4 mr-1" /> Download PDF
                 </Button>
               )}
             </div>
