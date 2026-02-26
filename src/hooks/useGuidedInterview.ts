@@ -25,7 +25,9 @@ function saveSession(session: GuidedSession) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
 }
 
-export function useGuidedInterview() {
+const AUTO_CONFIRM_TYPES = ['update_profile'];
+
+export function useGuidedInterview(onAutoConfirm?: (actions: import('@/types/guided').SuggestedAction[]) => void) {
   const { selectedTaxYear } = useAppContext();
   const [messages, setMessages] = useState<GuidedMessage[]>([]);
   const [stage, setStage] = useState<InterviewStage>('profile');
@@ -81,15 +83,23 @@ export function useGuidedInterview() {
       const aiResponse: AIChatResponse = await res.json();
       setStage(aiResponse.stage);
 
+      const autoActions = (aiResponse.suggestedActions || []).filter(a => AUTO_CONFIRM_TYPES.includes(a.type));
+      const visibleActions = (aiResponse.suggestedActions || []).filter(a => !AUTO_CONFIRM_TYPES.includes(a.type));
+
       const assistantMsg: GuidedMessage = {
         id: crypto.randomUUID(),
         role: 'assistant',
         content: aiResponse.message,
         questions: aiResponse.questions,
-        suggestedActions: aiResponse.suggestedActions,
+        suggestedActions: visibleActions,
         timestamp: new Date().toISOString(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
+
+      // Auto-confirm profile updates silently
+      if (autoActions.length > 0 && onAutoConfirm) {
+        onAutoConfirm(autoActions);
+      }
     } catch (err) {
       console.error('Guided interview error:', err);
       const errorMsg: GuidedMessage = {

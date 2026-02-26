@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useGuidedInterview } from '@/hooks/useGuidedInterview';
 import { useAddIncome } from '@/hooks/useIncome';
@@ -18,7 +18,11 @@ import { actionKey } from '@/components/ProposedActionsList';
 import { RotateCcw, Wrench, ArrowRight } from 'lucide-react';
 
 export default function Guided() {
-  const { messages, stage, isLoading, sendMessage, startInterview, resetSession } = useGuidedInterview();
+  const confirmRef = useRef<(action: SuggestedAction) => void>();
+  const handleAutoConfirm = useCallback((actions: SuggestedAction[]) => {
+    actions.forEach(a => confirmRef.current?.(a));
+  }, []);
+  const { messages, stage, isLoading, sendMessage, startInterview, resetSession } = useGuidedInterview(handleAutoConfirm);
   const addIncome = useAddIncome();
   const addGain = useAddCapitalGain();
   const addDeduction = useAddDeduction();
@@ -112,6 +116,8 @@ export default function Guided() {
     }
     setIsConfirming(false);
   }, [addIncome, addGain, addDeduction, updateProfile, addBik, addAsset, addAllowance, toast, messages]);
+
+  confirmRef.current = handleConfirmAction;
 
   return (
     <div className="h-[calc(100vh-3.5rem)] flex flex-col lg:flex-row gap-4 -m-4 md:-m-6">
