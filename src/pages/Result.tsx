@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatCard } from '@/components/StatCard';
 import { TaxBreakdownVisual } from '@/components/TaxBreakdownVisual';
+import { TaxCharts } from '@/components/TaxCharts';
 import { Calculator, FileText, ArrowRight, Loader2, Wallet, TrendingUp, Receipt, Sparkles } from 'lucide-react';
 
 export default function Result() {
@@ -98,6 +99,14 @@ export default function Result() {
             />
           </CardContent>
         </Card>
+      )}
+
+      {breakdown && (
+        <TaxCharts
+          breakdown={breakdown}
+          totalIncome={computation.totalIncome}
+          taxOwed={computation.taxOwed}
+        />
       )}
 
       <div className="flex justify-center gap-3 pb-6">
