@@ -163,6 +163,7 @@ export default function Guided() {
           <ChatPanel
             messages={messages}
             isLoading={isLoading}
+            stage={stage}
             onSend={sendMessage}
             onConfirmAction={handleConfirmAction}
             confirmedActionIds={confirmedIds}
