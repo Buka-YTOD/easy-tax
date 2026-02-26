@@ -5,6 +5,9 @@ import { useAddIncome } from '@/hooks/useIncome';
 import { useAddCapitalGain } from '@/hooks/useCapitalGains';
 import { useAddDeduction } from '@/hooks/useDeductions';
 import { useUpdateTaxProfile } from '@/hooks/useTaxProfile';
+import { useAddBenefitInKind } from '@/hooks/useBenefitsInKind';
+import { useAddAssetDeclaration } from '@/hooks/useAssetDeclarations';
+import { useAddCapitalAllowance } from '@/hooks/useCapitalAllowances';
 import { useToast } from '@/hooks/use-toast';
 import { ChatPanel } from '@/components/ChatPanel';
 import { StepperProgress } from '@/components/StepperProgress';
@@ -20,6 +23,9 @@ export default function Guided() {
   const addGain = useAddCapitalGain();
   const addDeduction = useAddDeduction();
   const updateProfile = useUpdateTaxProfile();
+  const addBik = useAddBenefitInKind();
+  const addAsset = useAddAssetDeclaration();
+  const addAllowance = useAddCapitalAllowance();
   const { toast } = useToast();
   const [confirmedIds, setConfirmedIds] = useState<Set<string>>(new Set());
   const [isConfirming, setIsConfirming] = useState(false);
@@ -56,6 +62,35 @@ export default function Guided() {
           });
           toast({ title: '✅ Deduction added!' });
           break;
+        case 'create_benefit_in_kind':
+          await addBik.mutateAsync({
+            category: p.category || 'Other',
+            annualValue: p.annualValue || 0,
+            description: p.description || null,
+          });
+          toast({ title: '✅ Benefit in kind added!' });
+          break;
+        case 'create_asset_declaration':
+          await addAsset.mutateAsync({
+            assetType: p.assetType || 'Other',
+            description: p.description || null,
+            location: p.location || '',
+            dateAcquired: p.dateAcquired || null,
+            cost: p.cost || 0,
+            currentValue: p.currentValue || 0,
+          });
+          toast({ title: '✅ Asset declaration added!' });
+          break;
+        case 'create_capital_allowance':
+          await addAllowance.mutateAsync({
+            assetDescription: p.assetDescription || '',
+            cost: p.cost || 0,
+            ratePercent: p.ratePercent || 0,
+            allowanceAmount: p.allowanceAmount || 0,
+            yearAcquired: p.yearAcquired || null,
+          });
+          toast({ title: '✅ Capital allowance added!' });
+          break;
         case 'update_profile':
           await updateProfile.mutateAsync(p);
           toast({ title: '✅ Profile updated!' });
@@ -76,7 +111,7 @@ export default function Guided() {
       toast({ title: 'Failed to apply action', variant: 'destructive' });
     }
     setIsConfirming(false);
-  }, [addIncome, addGain, addDeduction, updateProfile, toast, messages]);
+  }, [addIncome, addGain, addDeduction, updateProfile, addBik, addAsset, addAllowance, toast, messages]);
 
   return (
     <div className="h-[calc(100vh-3.5rem)] flex flex-col lg:flex-row gap-4 -m-4 md:-m-6">

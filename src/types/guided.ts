@@ -1,4 +1,4 @@
-export type InterviewStage = 'profile' | 'income' | 'capital_gains' | 'deductions' | 'review' | 'complete';
+export type InterviewStage = 'profile' | 'income' | 'capital_gains' | 'deductions' | 'benefits_in_kind' | 'asset_declarations' | 'capital_allowances' | 'review' | 'complete';
 
 export type QuestionType = 'text' | 'number' | 'currency' | 'date' | 'select' | 'yesno';
 
@@ -13,6 +13,9 @@ export type SuggestedActionType =
   | 'create_income'
   | 'create_capital_gain'
   | 'create_deduction'
+  | 'create_benefit_in_kind'
+  | 'create_asset_declaration'
+  | 'create_capital_allowance'
   | 'update_profile'
   | 'compute_tax'
   | 'generate_filing_pack';
