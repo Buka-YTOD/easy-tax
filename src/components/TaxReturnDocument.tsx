@@ -540,7 +540,7 @@ export function TaxReturnDocument({ data }: TaxReturnDocumentProps) {
 
 function FormSection({ partLabel, title, children }: { partLabel: string; title: string; children: React.ReactNode }) {
   return (
-    <section className="mb-5">
+    <section className="mb-5 pdf-keep-together">
       <div className="bg-gray-100 border border-gray-300 px-3 py-1.5 mb-3 flex items-baseline gap-2">
         {partLabel && (
           <span className="text-xs font-bold bg-black text-white px-1.5 py-0.5 rounded-sm leading-none">

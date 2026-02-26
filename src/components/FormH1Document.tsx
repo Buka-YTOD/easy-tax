@@ -718,7 +718,7 @@ function emolumentLabel(type: string): string {
 
 function H1Section({ num, title, children }: { num: string; title: string; children: React.ReactNode }) {
   return (
-    <section className="mb-5 print:break-inside-avoid">
+    <section className="mb-5 print:break-inside-avoid pdf-keep-together">
       <div className="bg-gray-100 border border-gray-300 px-3 py-1.5 mb-3 flex items-baseline gap-2">
         <span className="text-xs font-bold bg-black text-white px-1.5 py-0.5 rounded-sm leading-none">{num}</span>
         <h3 className="text-[10px] md:text-xs font-bold uppercase">{title}</h3>

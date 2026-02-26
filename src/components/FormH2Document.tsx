@@ -436,7 +436,7 @@ export function FormH2Document({ data }: FormH2DocumentProps) {
 
 function H2Section({ num, title, children }: { num: string; title: string; children: React.ReactNode }) {
   return (
-    <section className="mb-6 print:break-inside-avoid">
+    <section className="mb-6 print:break-inside-avoid pdf-keep-together">
       <div className="flex items-baseline gap-2 bg-gray-100 border border-gray-300 px-3 py-1.5 mb-3">
         <span className="bg-black text-white text-[9px] font-bold px-1.5 py-0.5 rounded-sm shrink-0">{num}</span>
         <h3 className="font-bold text-[11px] uppercase tracking-wide">{title}</h3>

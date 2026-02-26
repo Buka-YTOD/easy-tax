@@ -90,3 +90,27 @@
     padding: 0 !important;
   }
 }
+
+/* PDF export page-break rules — activated by .pdf-exporting ancestor */
+.pdf-exporting section {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.pdf-exporting table {
+  page-break-inside: auto;
+}
+.pdf-exporting tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.pdf-exporting thead {
+  display: table-header-group;
+}
+.pdf-exporting .pdf-keep-together {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+.pdf-exporting .pdf-page-break-before {
+  page-break-before: always;
+  break-before: page;
+}
