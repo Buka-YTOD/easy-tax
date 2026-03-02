@@ -1,14 +1,17 @@
 import { Link } from 'react-router-dom';
 import { useComputation } from '@/hooks/useComputation';
 import { useIncome } from '@/hooks/useIncome';
+import { useFilingPack } from '@/hooks/useFilingPack';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Bot, Wrench, ArrowRight, Sparkles } from 'lucide-react';
+import { Bot, Wrench, ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function Home() {
   const { data: computation } = useComputation();
   const { data: income = [] } = useIncome();
-  const hasProgress = income.length > 0 || !!computation;
+  const { data: filingPack } = useFilingPack();
+  const isComplete = !!filingPack;
+  const hasProgress = !isComplete && (income.length > 0 || !!computation);
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 py-4">
@@ -16,6 +19,25 @@ export default function Home() {
         <h1 className="text-3xl font-bold text-foreground">Welcome to TaxWise 🇳🇬</h1>
         <p className="text-muted-foreground text-lg">Let's get your taxes sorted — the easy way.</p>
       </div>
+
+      {isComplete && (
+        <Card className="border-primary/20 bg-primary/5">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="h-5 w-5 text-primary shrink-0" />
+              <div>
+                <p className="font-medium text-foreground">Your tax return is ready!</p>
+                <p className="text-sm text-muted-foreground">Filing pack generated for this year.</p>
+              </div>
+            </div>
+            <Link to="/app/filing-pack">
+              <Button size="sm" variant="outline">
+                View Filing Pack <ArrowRight className="h-4 w-4 ml-1" />
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
 
       {hasProgress && (
         <Card className="border-primary/20 bg-accent/30">
