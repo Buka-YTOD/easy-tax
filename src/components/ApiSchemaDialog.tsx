@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Copy, Check, Download, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAppContext } from '@/contexts/AppContext';
-import { mapToLIRSFormASchema, type LIRSFormARequest, type SchemaMissingFields } from '@/lib/formSchemaMapper';
+import { mapToFormSchema, type SchemaMissingFields } from '@/lib/formSchemaMapper';
 
 interface Props {
   open: boolean;
