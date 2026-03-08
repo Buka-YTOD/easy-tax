@@ -65,7 +65,6 @@ export default function FilingPack() {
   const h2Ref = useRef<HTMLDivElement>(null);
   const { exportToPdf, isExporting } = usePdfExport();
   const [showSchema, setShowSchema] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   const handleGenerate = async () => {
     try {
