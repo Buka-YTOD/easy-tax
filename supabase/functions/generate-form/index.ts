@@ -139,9 +139,9 @@ Deno.serve(async (req) => {
   }
 
   // Authenticate: service role key only
-  if (!validateServiceRole(req)) {
+  if (!validateApiKey(req)) {
     return new Response(
-      JSON.stringify({ error: "Unauthorized. Service role key required." }),
+      JSON.stringify({ error: "Unauthorized. Valid API key required." }),
       { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
