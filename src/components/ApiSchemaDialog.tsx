@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Copy, Check, Download, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAppContext } from '@/contexts/AppContext';
-import { mapToLIRSFormASchema, type LIRSFormARequest, type SchemaMissingFields } from '@/lib/formSchemaMapper';
+import { mapToFormSchema, type SchemaMissingFields } from '@/lib/formSchemaMapper';
 
 interface Props {
   open: boolean;
@@ -31,19 +31,17 @@ function SchemaSection({ title, num, children }: { title: string; num?: string; 
 
 function SchemaField({ label, value, fieldNum, missing }: { label: string; value: string | number | null; fieldNum?: number; missing?: boolean }) {
   return (
-    <div className="flex items-baseline gap-2 px-2 py-1 rounded text-sm hover:bg-muted/50">
-      {fieldNum && (
-        <span className="text-[10px] font-mono text-muted-foreground w-5 shrink-0">{fieldNum}.</span>
+    <div className="flex items-baseline gap-2 px-2 py-1 text-xs">
+      {fieldNum !== undefined && (
+        <span className="text-[10px] text-muted-foreground font-mono w-4 shrink-0">{fieldNum}.</span>
       )}
-      <span className="text-muted-foreground text-xs min-w-[140px] shrink-0">{label}</span>
-      {missing ? (
-        <span className="text-destructive text-xs italic flex items-center gap-1">
+      <span className="text-muted-foreground shrink-0">{label}:</span>
+      {missing || value === null || value === '' ? (
+        <span className="text-destructive italic flex items-center gap-1">
           <AlertTriangle className="h-3 w-3" /> Not collected
         </span>
       ) : (
-        <span className="font-mono text-xs font-medium text-foreground break-all">
-          {value === null || value === '' ? <span className="text-muted-foreground/50">—</span> : String(value)}
-        </span>
+        <span className="font-medium font-mono">{value}</span>
       )}
     </div>
   );
@@ -52,20 +50,13 @@ function SchemaField({ label, value, fieldNum, missing }: { label: string; value
 function MissingFieldsAlert({ fields }: { fields: SchemaMissingFields[] }) {
   if (fields.length === 0) return null;
   return (
-    <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 mb-4">
-      <div className="flex items-center gap-2 mb-2">
-        <AlertTriangle className="h-4 w-4 text-destructive" />
-        <span className="text-sm font-semibold text-destructive">Missing Form Fields ({fields.length})</span>
+    <div className="mb-4 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+      <div className="flex items-center gap-2 text-destructive text-xs font-semibold mb-1">
+        <AlertTriangle className="h-3.5 w-3.5" /> {fields.length} Required Field{fields.length > 1 ? 's' : ''} Missing
       </div>
-      <p className="text-xs text-muted-foreground mb-2">
-        These fields are required by the LIRS form but not yet collected from the user. The API will leave them blank.
-      </p>
-      <ul className="space-y-1">
+      <ul className="text-xs text-muted-foreground space-y-0.5 ml-5">
         {fields.map((f) => (
-          <li key={f.field} className="text-xs flex items-center gap-2">
-            <span className="font-mono text-muted-foreground">#{f.formNumber}</span>
-            <span className="text-foreground">{f.description}</span>
-          </li>
+          <li key={f.field}>Field {String(f.formNumber)}: {f.description}</li>
         ))}
       </ul>
     </div>
@@ -77,13 +68,14 @@ export function ApiSchemaDialog({ open, onOpenChange, summaryData }: Props) {
   const { toast } = useToast();
   const { selectedTaxYear } = useAppContext();
 
-  const { schema, missingFields } = useMemo(
-    () => (summaryData ? mapToLIRSFormASchema(summaryData) : { schema: null, missingFields: [] }),
+  const result = useMemo(
+    () => (summaryData ? mapToFormSchema(summaryData) : null),
     [summaryData]
   );
 
-  if (!schema) return null;
+  if (!result) return null;
 
+  const { variant, schema, missingFields } = result;
   const jsonString = JSON.stringify(schema, null, 2);
 
   const handleCopy = () => {
@@ -98,24 +90,31 @@ export function ApiSchemaDialog({ open, onOpenChange, summaryData }: Props) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `lirs-form-a-schema-${selectedTaxYear}.json`;
+    a.download = `form-schema-${variant}-${selectedTaxYear}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  const pp = schema.personalParticulars;
-  const sp = schema.spouseInformation;
+  const variantLabels: Record<string, string> = {
+    lagos_non_artisan: 'Lagos — Non-Artisan (Abridged Form A)',
+    lagos_artisan: 'Lagos — Artisan (Abridged Form A)',
+    abuja_form_a: 'Abuja FCT-IRS — Form A (Comprehensive)',
+  };
+
+  // For Lagos variants, render the structured form view
+  const isLagos = variant === 'lagos_non_artisan' || variant === 'lagos_artisan';
+  const lagosSchema = isLagos ? (schema as any) : null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[85vh] flex flex-col">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <DialogTitle>LIRS Form A — API Request Schema</DialogTitle>
-            <Badge variant="outline" className="text-[10px]">{schema.meta.state}</Badge>
+            <DialogTitle>API Request Schema</DialogTitle>
+            <Badge variant="outline" className="text-[10px]">{variant}</Badge>
           </div>
           <DialogDescription>
-            Structured payload mapping to the official LIRS Form A (Non-Artisans). Tax Year {schema.meta.taxYear}.
+            {variantLabels[variant] || variant}. Tax Year {selectedTaxYear}.
           </DialogDescription>
         </DialogHeader>
 
@@ -124,7 +123,6 @@ export function ApiSchemaDialog({ open, onOpenChange, summaryData }: Props) {
             {missingFields.length > 0 && (
               <Badge variant="destructive" className="text-[10px]">{missingFields.length} missing fields</Badge>
             )}
-            <Badge variant="secondary" className="text-[10px]">{schema.meta.formType}</Badge>
           </div>
           <div className="flex gap-2">
             <Button size="sm" variant="outline" onClick={handleCopy}>
@@ -137,107 +135,59 @@ export function ApiSchemaDialog({ open, onOpenChange, summaryData }: Props) {
           </div>
         </div>
 
-        <Tabs defaultValue="visual" className="flex-1 flex flex-col min-h-0">
+        <Tabs defaultValue={isLagos ? 'visual' : 'json'} className="flex-1 flex flex-col min-h-0">
           <TabsList className="w-fit">
-            <TabsTrigger value="visual">Form View</TabsTrigger>
+            {isLagos && <TabsTrigger value="visual">Form View</TabsTrigger>}
             <TabsTrigger value="json">Raw JSON</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="visual" className="flex-1 min-h-0">
-            <ScrollArea className="h-[50vh] rounded-lg border p-4">
-              <MissingFieldsAlert fields={missingFields} />
+          {isLagos && lagosSchema && (
+            <TabsContent value="visual" className="flex-1 min-h-0">
+              <ScrollArea className="h-[50vh] rounded-lg border p-4">
+                <MissingFieldsAlert fields={missingFields} />
 
-              <SchemaSection title="Personal Particulars" num="A">
-                <SchemaField fieldNum={1} label="Full Name" value={pp.field1_fullName} />
-                <SchemaField fieldNum={2} label="Title" value={pp.field2_title} missing={!pp.field2_title} />
-                <SchemaField fieldNum={3} label="Marital Status" value={pp.field3_maritalStatus} />
-                <SchemaField fieldNum={4} label="Date of Birth" value={pp.field4_dateOfBirth} />
-                <SchemaField fieldNum={5} label="Residential Address" value={pp.field5_residentialAddress} />
-                <SchemaField fieldNum={6} label="Nationality" value={pp.field6_nationality} />
-                <SchemaField fieldNum={7} label="Business/Employment Address" value={pp.field7_businessOrEmploymentAddress} />
-                <SchemaField fieldNum={8} label="Occupation" value={pp.field8_occupation} />
-                <SchemaField fieldNum={9} label="Residence as 1st Jan" value={pp.field9_residenceAsAt1stJan} />
-              </SchemaSection>
-
-              <SchemaSection title="Spouse Information" num="B">
-                <SchemaField fieldNum={10} label="Spouse Name" value={sp.field10_spouseName} />
-                <SchemaField fieldNum={11} label="Spouse Date of Birth" value={sp.field11_spouseDateOfBirth} missing={!sp.field11_spouseDateOfBirth && pp.field3_maritalStatus === 'MARRIED'} />
-                <SchemaField fieldNum={12} label="Spouse Occupation" value={sp.field12_spouseOccupation} missing={!sp.field12_spouseOccupation && pp.field3_maritalStatus === 'MARRIED'} />
-                <SchemaField fieldNum={13} label="Spouse Business Address" value={sp.field13_spouseBusinessAddress} missing={!sp.field13_spouseBusinessAddress && pp.field3_maritalStatus === 'MARRIED'} />
-              </SchemaSection>
-
-              <SchemaSection title="Children Information" num="C">
-                <SchemaField fieldNum={14} label="Number of Children" value={schema.childrenInformation.field14_numberOfChildren} />
-              </SchemaSection>
-
-              <SchemaSection title="Income & Tax (Previous Years)" num="D">
-                {schema.incomeAndTaxPreviousYears.field15_yearData.length === 0 ? (
-                  <div className="text-xs text-muted-foreground italic px-2 py-1 flex items-center gap-1">
-                    <AlertTriangle className="h-3 w-3 text-destructive" />
-                    Historical year data not yet collected
-                  </div>
-                ) : (
-                  schema.incomeAndTaxPreviousYears.field15_yearData.map((y) => (
-                    <div key={y.year} className="flex gap-4 px-2 py-1 text-xs">
-                      <span className="font-mono">{y.year}</span>
-                      <span>Income: ₦{y.income.toLocaleString()}</span>
-                      <span>Tax: ₦{y.taxPaid.toLocaleString()}</span>
-                    </div>
-                  ))
-                )}
-              </SchemaSection>
-
-              <SchemaSection title="Computed Tax Data" num="E">
-                <SchemaField label="Total Income" value={`₦${schema.computedData.totalIncome.toLocaleString()}`} />
-                <SchemaField label="Taxable Income" value={`₦${schema.computedData.taxableIncome.toLocaleString()}`} />
-                <SchemaField label="Tax Owed" value={`₦${schema.computedData.taxOwed.toLocaleString()}`} />
-                <SchemaField label="Monthly PAYE" value={`₦${schema.computedData.monthlyPAYE.toLocaleString()}`} />
-                {schema.computedData.cra && (
-                  <>
-                    <SchemaField label="CRA (Statutory)" value={`₦${schema.computedData.cra.statutory.toLocaleString()}`} />
-                    <SchemaField label="CRA (20%)" value={`₦${schema.computedData.cra.twentyPercent.toLocaleString()}`} />
-                    <SchemaField label="CRA (Total)" value={`₦${schema.computedData.cra.total.toLocaleString()}`} />
-                  </>
-                )}
-              </SchemaSection>
-
-              <SchemaSection title="Income Breakdown" num="F">
-                {schema.computedData.incomeBreakdown.length === 0 ? (
-                  <div className="text-xs text-muted-foreground italic px-2">No income records</div>
-                ) : (
-                  schema.computedData.incomeBreakdown.map((inc, i) => (
-                    <div key={i} className="flex items-baseline gap-3 px-2 py-1 text-xs">
-                      <Badge variant="outline" className="text-[10px] shrink-0">{inc.type}</Badge>
-                      <span className="font-mono">₦{inc.amount.toLocaleString()}</span>
-                      <span className="text-muted-foreground">{inc.frequency}</span>
-                    </div>
-                  ))
-                )}
-              </SchemaSection>
-
-              {schema.supportingData.benefitsInKind.length > 0 && (
-                <SchemaSection title="Benefits in Kind" num="G">
-                  {schema.supportingData.benefitsInKind.map((b, i) => (
-                    <div key={i} className="flex items-baseline gap-3 px-2 py-1 text-xs">
-                      <Badge variant="outline" className="text-[10px] shrink-0">{b.category}</Badge>
-                      <span className="font-mono">₦{b.annualValue.toLocaleString()}</span>
-                    </div>
-                  ))}
+                <SchemaSection title="Personal Particulars" num="A">
+                  <SchemaField fieldNum={1} label="Full Name" value={lagosSchema.personalParticulars.field1_fullName} />
+                  <SchemaField fieldNum={2} label="Title" value={lagosSchema.personalParticulars.field2_title} missing={!lagosSchema.personalParticulars.field2_title} />
+                  <SchemaField fieldNum={3} label="Marital Status" value={lagosSchema.personalParticulars.field3_maritalStatus} />
+                  <SchemaField fieldNum={4} label="Date of Birth" value={lagosSchema.personalParticulars.field4_dateOfBirth} />
+                  <SchemaField fieldNum={5} label="Residential Address" value={lagosSchema.personalParticulars.field5_residentialAddress} />
+                  <SchemaField fieldNum={6} label="Nationality" value={lagosSchema.personalParticulars.field6_nationality} />
+                  <SchemaField fieldNum={7} label="Business/Employment Address" value={lagosSchema.personalParticulars.field7_businessOrEmploymentAddress} />
+                  <SchemaField fieldNum={8} label="Occupation" value={lagosSchema.personalParticulars.field8_occupation} />
+                  <SchemaField fieldNum={9} label="Residence as 1st Jan" value={lagosSchema.personalParticulars.field9_residenceAsAt1stJan} />
                 </SchemaSection>
-              )}
 
-              {schema.supportingData.capitalGains.length > 0 && (
-                <SchemaSection title="Capital Gains" num="H">
-                  {schema.supportingData.capitalGains.map((g, i) => (
-                    <div key={i} className="flex items-baseline gap-3 px-2 py-1 text-xs">
-                      <Badge variant="outline" className="text-[10px] shrink-0">{g.assetType}</Badge>
-                      <span className="font-mono">Gain: ₦{g.gain.toLocaleString()}</span>
-                    </div>
-                  ))}
+                <SchemaSection title="Spouse Information" num="B">
+                  <SchemaField fieldNum={10} label="Spouse Name" value={lagosSchema.spouseInformation.field10_spouseName} />
+                  <SchemaField fieldNum={11} label="Spouse DOB" value={lagosSchema.spouseInformation.field11_spouseDateOfBirth} missing={!lagosSchema.spouseInformation.field11_spouseDateOfBirth && lagosSchema.personalParticulars.field3_maritalStatus === 'MARRIED'} />
+                  <SchemaField fieldNum={12} label="Spouse Occupation" value={lagosSchema.spouseInformation.field12_spouseOccupation} missing={!lagosSchema.spouseInformation.field12_spouseOccupation && lagosSchema.personalParticulars.field3_maritalStatus === 'MARRIED'} />
+                  <SchemaField fieldNum={13} label="Spouse Business Address" value={lagosSchema.spouseInformation.field13_spouseBusinessAddress} missing={!lagosSchema.spouseInformation.field13_spouseBusinessAddress && lagosSchema.personalParticulars.field3_maritalStatus === 'MARRIED'} />
                 </SchemaSection>
-              )}
-            </ScrollArea>
-          </TabsContent>
+
+                <SchemaSection title="Children Information" num="C">
+                  <SchemaField fieldNum={14} label="Number of Children" value={lagosSchema.childrenInformation.field14_numberOfChildren} />
+                </SchemaSection>
+
+                <SchemaSection title="Income & Tax (Previous Years)" num="D">
+                  {lagosSchema.incomeAndTaxHistory.field15_yearData.length === 0 ? (
+                    <div className="text-xs text-muted-foreground italic px-2 py-1 flex items-center gap-1">
+                      <AlertTriangle className="h-3 w-3 text-destructive" />
+                      Historical year data not yet collected
+                    </div>
+                  ) : (
+                    lagosSchema.incomeAndTaxHistory.field15_yearData.map((y: any) => (
+                      <div key={y.year} className="flex gap-4 px-2 py-1 text-xs">
+                        <span className="font-mono">{y.year}</span>
+                        <span>Income: ₦{y.income.toLocaleString()}</span>
+                        <span>Tax: ₦{y.taxPaid.toLocaleString()}</span>
+                      </div>
+                    ))
+                  )}
+                </SchemaSection>
+              </ScrollArea>
+            </TabsContent>
+          )}
 
           <TabsContent value="json" className="flex-1 min-h-0">
             <ScrollArea className="h-[50vh] rounded-lg border bg-muted p-4">
