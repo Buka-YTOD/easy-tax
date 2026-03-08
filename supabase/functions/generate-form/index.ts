@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// ─── Helpers (duplicated from lib for edge runtime) ────────────
+// ─── Helpers ───────────────────────────────────────────────────
 
 type FormVariant = "lagos_non_artisan" | "lagos_artisan" | "abuja_form_a";
 
@@ -119,11 +119,28 @@ function mapAbuja(data: any) {
   };
 }
 
+// ─── Auth: Validate service role key ───────────────────────────
+
+function validateServiceRole(req: Request): boolean {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return false;
+  const token = authHeader.replace("Bearer ", "");
+  return token === Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+}
+
 // ─── Handler ───────────────────────────────────────────────────
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Authenticate: service role key only
+  if (!validateServiceRole(req)) {
+    return new Response(
+      JSON.stringify({ error: "Unauthorized. Service role key required." }),
+      { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
   }
 
   try {
@@ -137,7 +154,6 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    // Fetch the generated form record
     const { data: row, error } = await supabase
       .from("generated_forms")
       .select("*")
@@ -170,6 +186,7 @@ Deno.serve(async (req) => {
       formType: row.form_type,
       status: row.status,
       generatedAt: row.generated_at,
+      callbackUrl: `${Deno.env.get("SUPABASE_URL")}/functions/v1/form-webhook`,
       schema: mappedSchema,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
