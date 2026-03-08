@@ -78,7 +78,7 @@ export function ApiSchemaDialog({ open, onOpenChange, summaryData }: Props) {
   const { selectedTaxYear } = useAppContext();
 
   const { schema, missingFields } = useMemo(
-    () => (summaryData ? mapToLIRSFormASchema(summaryData) : { schema: null, missingFields: [] }),
+    () => (summaryData ? mapToFormSchema(summaryData) : { variant: 'lagos_non_artisan' as const, schema: null, missingFields: [] }),
     [summaryData]
   );
 
