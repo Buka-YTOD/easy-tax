@@ -232,6 +232,8 @@ export default function FilingPack() {
             </p>
           </CardContent>
         </Card>
+      )}
+
       {/* Admin-only: API request schema viewer */}
       {isAdmin && (
         <Dialog open={showSchema} onOpenChange={setShowSchema}>
