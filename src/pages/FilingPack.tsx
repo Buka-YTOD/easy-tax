@@ -12,9 +12,9 @@ import { TaxReturnDocument } from '@/components/TaxReturnDocument';
 import { FormH1Document } from '@/components/FormH1Document';
 import { FormH2Document } from '@/components/FormH2Document';
 import { FilingInstructions } from '@/components/FilingInstructions';
-import { FileText, Download, Printer, Loader2, Calculator, PartyPopper, FileDown, Code2, Copy, Check } from 'lucide-react';
+import { FileText, Download, Printer, Loader2, Calculator, PartyPopper, FileDown, Code2 } from 'lucide-react';
 import { usePdfExport } from '@/hooks/usePdfExport';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { ApiSchemaDialog } from '@/components/ApiSchemaDialog';
 
 const BASE_STYLES = `*{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,Helvetica,sans-serif;max-width:800px;margin:40px auto;padding:0 20px;color:#111;font-size:13px;line-height:1.5}
