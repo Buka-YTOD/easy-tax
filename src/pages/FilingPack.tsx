@@ -152,6 +152,11 @@ export default function FilingPack() {
             )}
             {pack ? 'Regenerate' : 'Generate Document'}
           </Button>
+          {isAdmin && summaryData && (
+            <Button variant="outline" onClick={() => setShowSchema(true)}>
+              <Code2 className="h-4 w-4 mr-2" /> API Schema
+            </Button>
+          )}
         </div>
       </div>
 
