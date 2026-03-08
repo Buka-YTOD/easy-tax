@@ -234,53 +234,8 @@ export default function FilingPack() {
         </Card>
       )}
 
-      {/* Admin-only: API request schema viewer */}
       {isAdmin && (
-        <Dialog open={showSchema} onOpenChange={setShowSchema}>
-          <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
-            <DialogHeader>
-              <DialogTitle>API Request Schema</DialogTitle>
-              <DialogDescription>
-                JSON payload to send to the external PDF generation API.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="flex justify-end gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  navigator.clipboard.writeText(JSON.stringify(summaryData, null, 2));
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 2000);
-                  toast({ title: 'Copied to clipboard' });
-                }}
-              >
-                {copied ? <Check className="h-4 w-4 mr-1" /> : <Copy className="h-4 w-4 mr-1" />}
-                {copied ? 'Copied' : 'Copy'}
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => {
-                  const blob = new Blob([JSON.stringify(summaryData, null, 2)], { type: 'application/json' });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement('a');
-                  a.href = url;
-                  a.download = `api-schema-${selectedTaxYear}.json`;
-                  a.click();
-                  URL.revokeObjectURL(url);
-                }}
-              >
-                <Download className="h-4 w-4 mr-1" /> Download JSON
-              </Button>
-            </div>
-            <div className="flex-1 overflow-auto rounded-lg border bg-muted p-4">
-              <pre className="text-xs font-mono text-foreground whitespace-pre-wrap break-words">
-                {JSON.stringify(summaryData, null, 2)}
-              </pre>
-            </div>
-          </DialogContent>
-        </Dialog>
+        <ApiSchemaDialog open={showSchema} onOpenChange={setShowSchema} summaryData={summaryData} />
       )}
     </div>
   );
