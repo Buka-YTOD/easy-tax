@@ -57,12 +57,15 @@ export default function FilingPack() {
   const { selectedTaxYear } = useAppContext();
   const { data: pack } = useFilingPack();
   const { data: computation } = useComputation();
+  const { data: isAdmin } = useIsAdmin();
   const generatePack = useGenerateFilingPack();
   const { toast } = useToast();
   const printRef = useRef<HTMLDivElement>(null);
   const h1Ref = useRef<HTMLDivElement>(null);
   const h2Ref = useRef<HTMLDivElement>(null);
   const { exportToPdf, isExporting } = usePdfExport();
+  const [showSchema, setShowSchema] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const handleGenerate = async () => {
     try {
