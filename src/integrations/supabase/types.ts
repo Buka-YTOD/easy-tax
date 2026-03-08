@@ -321,28 +321,37 @@ export type Database = {
           form_type: string
           generated_at: string
           id: string
+          pdf_url: string | null
           scenario_id: string
           status: string
           summary_json: Json | null
           user_id: string
+          webhook_received_at: string | null
+          webhook_status: string | null
         }
         Insert: {
           form_type?: string
           generated_at?: string
           id?: string
+          pdf_url?: string | null
           scenario_id: string
           status?: string
           summary_json?: Json | null
           user_id: string
+          webhook_received_at?: string | null
+          webhook_status?: string | null
         }
         Update: {
           form_type?: string
           generated_at?: string
           id?: string
+          pdf_url?: string | null
           scenario_id?: string
           status?: string
           summary_json?: Json | null
           user_id?: string
+          webhook_received_at?: string | null
+          webhook_status?: string | null
         }
         Relationships: [
           {
