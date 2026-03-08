@@ -119,13 +119,16 @@ function mapAbuja(data: any) {
   };
 }
 
-// ─── Auth: Validate service role key ───────────────────────────
+// ─── Auth: Validate API key ────────────────────────────────────
 
-function validateServiceRole(req: Request): boolean {
+function validateApiKey(req: Request): boolean {
+  // Accept via Authorization: Bearer <key> or x-api-key header
   const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) return false;
-  const token = authHeader.replace("Bearer ", "");
-  return token === Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.replace("Bearer ", "") === Deno.env.get("FORMS_API_KEY");
+  }
+  const apiKey = req.headers.get("x-api-key");
+  return apiKey === Deno.env.get("FORMS_API_KEY");
 }
 
 // ─── Handler ───────────────────────────────────────────────────
