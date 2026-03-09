@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, User } from 'lucide-react';
+import { ArrowRight, User, MapPin } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -16,17 +16,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-const NIGERIAN_STATES = [
-  'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno',
-  'Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','FCT Abuja','Gombe',
-  'Imo','Jigawa','Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara','Lagos',
-  'Nasarawa','Niger','Ogun','Ondo','Osun','Oyo','Plateau','Rivers','Sokoto',
-  'Taraba','Yobe','Zamfara',
-];
+
 
 const settingsSchema = z.object({
   filingType: z.enum(['Individual', 'Business']),
-  stateOfResidence: z.string().min(1, 'Required'),
   tin: z.string().optional(),
   isResident: z.boolean(),
 });
@@ -53,14 +46,13 @@ export default function Settings() {
 
   const form = useForm<SettingsForm>({
     resolver: zodResolver(settingsSchema),
-    defaultValues: { filingType: 'Individual', stateOfResidence: '', tin: '', isResident: true },
+    defaultValues: { filingType: 'Individual', tin: '', isResident: true },
   });
 
   useEffect(() => {
     if (profile) {
       form.reset({
         filingType: profile.filingType,
-        stateOfResidence: profile.stateOfResidence,
         tin: profile.tin || '',
         isResident: profile.isResident,
       });
@@ -69,8 +61,8 @@ export default function Settings() {
 
   const onSubmit = async (data: SettingsForm) => {
     try {
-      // Spread existing profile to preserve extended fields
-      await updateProfile.mutateAsync({ ...profile, ...data });
+      // Spread existing profile and inject state from user profile
+      await updateProfile.mutateAsync({ ...profile, ...data, stateOfResidence: userProfile?.state || profile?.stateOfResidence || '' });
       toast({ title: 'Settings saved!' });
     } catch {
       toast({ title: 'Error saving', variant: 'destructive' });
@@ -218,18 +210,14 @@ export default function Settings() {
                 </FormItem>
               )} />
 
-              <FormField control={form.control} name="stateOfResidence" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>State of Residence</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl><SelectTrigger><SelectValue placeholder="Select state" /></SelectTrigger></FormControl>
-                    <SelectContent>
-                      {NIGERIAN_STATES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              <FormItem>
+                <FormLabel>State of Residence</FormLabel>
+                <div className="flex items-center gap-2 h-10 px-3 rounded-md border border-input bg-muted text-sm">
+                  <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span>{userProfile?.state || 'Not set'}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">Set during sign-up. Contact support to change.</p>
+              </FormItem>
 
               <FormField control={form.control} name="tin" render={({ field }) => (
                 <FormItem>
