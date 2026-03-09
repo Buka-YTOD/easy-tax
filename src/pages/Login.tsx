@@ -89,9 +89,9 @@ export default function Login() {
       if (error) {
         toast({ title: 'Sign up failed', description: error.message, variant: 'destructive' });
       } else {
-        // Update the profile with the selected state
         if (data.user) {
           await supabase.from('profiles').update({ state: selectedState }).eq('user_id', data.user.id);
+          subscribeToNewsletter(email, fullName);
         }
         toast({ title: 'Check your email', description: 'We sent you a confirmation link to verify your account.' });
       }
