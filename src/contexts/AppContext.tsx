@@ -8,6 +8,7 @@ interface Profile {
   full_name: string;
   phone_number: string | null;
   avatar_url: string | null;
+  state: string;
 }
 
 interface AppContextType {
