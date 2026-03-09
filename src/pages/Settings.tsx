@@ -46,7 +46,7 @@ export default function Settings() {
 
   const form = useForm<SettingsForm>({
     resolver: zodResolver(settingsSchema),
-    defaultValues: { filingType: 'Individual', stateOfResidence: '', tin: '', isResident: true },
+    defaultValues: { filingType: 'Individual', tin: '', isResident: true },
   });
 
   useEffect(() => {
