@@ -16,7 +16,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
-const SUPPORTED_STATES = ['Lagos', 'FCT Abuja', 'Rivers'] as const;
+
 
 const settingsSchema = z.object({
   filingType: z.enum(['Individual', 'Business']),
