@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TaxReturnDocument } from '@/components/TaxReturnDocument';
+import { AbujaFormADocument } from '@/components/AbujaFormADocument';
 import { FormH1Document } from '@/components/FormH1Document';
 import { FormH2Document } from '@/components/FormH2Document';
 import { FilingInstructions } from '@/components/FilingInstructions';
@@ -77,6 +78,7 @@ export default function FilingPack() {
 
   const summaryData = pack?.summaryJson ? JSON.parse(pack.summaryJson) : null;
   const isBusinessFiler = summaryData?.profile?.filingType === 'Business';
+  const isAbuja = summaryData?.profile?.stateOfResidence === 'FCT Abuja';
 
   const handlePrint = () => {
     window.print();
@@ -202,6 +204,8 @@ export default function FilingPack() {
                     <FormH2Document data={summaryData} />
                   </div>
                 </>
+              ) : isAbuja ? (
+                <AbujaFormADocument data={summaryData} />
               ) : (
                 <TaxReturnDocument data={summaryData} />
               )}
