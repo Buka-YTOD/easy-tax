@@ -156,13 +156,12 @@ export default function Login() {
                       <SelectValue placeholder="Select your state" />
                     </SelectTrigger>
                     <SelectContent className="z-50 bg-popover">
-                      {ALL_NIGERIAN_STATES.map((s) => (
-                        <SelectItem key={s} value={s}>
-                          {s}
-                          {(SUPPORTED_STATES as readonly string[]).includes(s) && (
-                            <span className="ml-2 text-xs text-primary">✓ Supported</span>
-                          )}
-                        </SelectItem>
+                      {SUPPORTED_STATES.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                      <div className="my-1 h-px bg-border" />
+                      {UNSUPPORTED_STATES.map((s) => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
