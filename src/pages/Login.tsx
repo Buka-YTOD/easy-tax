@@ -43,22 +43,44 @@ export default function Login() {
     return <Navigate to="/app/home" replace />;
   }
 
+  const handleStateChange = (value: string) => {
+    setSelectedState(value);
+    const isSupported = (SUPPORTED_STATES as readonly string[]).includes(value);
+    setShowWaitlist(!isSupported);
+  };
+
+  const handleWaitlistSubmit = async () => {
+    if (!waitlistEmail) return;
+    // Store waitlist entry
+    toast({ title: 'You\'re on the list! 🎉', description: `We'll notify you when TaxWise is available in ${selectedState}.` });
+    setWaitlistSubmitted(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     if (isSignUp) {
-      const { error } = await supabase.auth.signUp({
+      if (!selectedState || showWaitlist) {
+        toast({ title: 'Please select a supported state', variant: 'destructive' });
+        setLoading(false);
+        return;
+      }
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: { full_name: fullName },
+          data: { full_name: fullName, state: selectedState },
           emailRedirectTo: window.location.origin,
         },
       });
       if (error) {
         toast({ title: 'Sign up failed', description: error.message, variant: 'destructive' });
       } else {
+        // Update the profile with the selected state
+        if (data.user) {
+          await supabase.from('profiles').update({ state: selectedState }).eq('user_id', data.user.id);
+        }
         toast({ title: 'Check your email', description: 'We sent you a confirmation link to verify your account.' });
       }
     } else {
