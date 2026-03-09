@@ -20,7 +20,6 @@ const SUPPORTED_STATES = ['Lagos', 'FCT Abuja', 'Rivers'] as const;
 
 const settingsSchema = z.object({
   filingType: z.enum(['Individual', 'Business']),
-  stateOfResidence: z.string().min(1, 'Required'),
   tin: z.string().optional(),
   isResident: z.boolean(),
 });
