@@ -49,9 +49,21 @@ export default function Login() {
     setShowWaitlist(!isSupported);
   };
 
+  const subscribeToNewsletter = async (subscriberEmail: string, name?: string) => {
+    try {
+      const [first_name, ...rest] = (name || '').split(' ');
+      const last_name = rest.join(' ');
+      await supabase.functions.invoke('subscribe-newsletter', {
+        body: { email: subscriberEmail, first_name, last_name, state: selectedState },
+      });
+    } catch (err) {
+      console.error('Newsletter subscribe failed:', err);
+    }
+  };
+
   const handleWaitlistSubmit = async () => {
     if (!waitlistEmail) return;
-    // Store waitlist entry
+    await subscribeToNewsletter(waitlistEmail);
     toast({ title: 'You\'re on the list! 🎉', description: `We'll notify you when TaxWise is available in ${selectedState}.` });
     setWaitlistSubmitted(true);
   };
@@ -77,9 +89,9 @@ export default function Login() {
       if (error) {
         toast({ title: 'Sign up failed', description: error.message, variant: 'destructive' });
       } else {
-        // Update the profile with the selected state
         if (data.user) {
           await supabase.from('profiles').update({ state: selectedState }).eq('user_id', data.user.id);
+          subscribeToNewsletter(email, fullName);
         }
         toast({ title: 'Check your email', description: 'We sent you a confirmation link to verify your account.' });
       }
