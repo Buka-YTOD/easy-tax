@@ -53,7 +53,6 @@ export default function Settings() {
     if (profile) {
       form.reset({
         filingType: profile.filingType,
-        stateOfResidence: profile.stateOfResidence,
         tin: profile.tin || '',
         isResident: profile.isResident,
       });
