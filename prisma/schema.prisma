@@ -1,0 +1,287 @@
+// Prisma schema generated from Lovable Cloud database
+// Use this to migrate to your own Supabase/Postgres instance
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────
+
+enum AppRole {
+  admin
+  moderator
+  user
+
+  @@map("app_role")
+}
+
+// ─── Models ──────────────────────────────────────────────
+
+model Profile {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id      String   @db.Uuid
+  full_name    String   @default("")
+  avatar_url   String?
+  phone_number String?
+  state        String   @default("")
+  created_at   DateTime @default(now()) @db.Timestamptz
+  updated_at   DateTime @default(now()) @db.Timestamptz
+
+  @@map("profiles")
+}
+
+model UserRole {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String   @db.Uuid
+  role       AppRole
+  created_at DateTime @default(now()) @db.Timestamptz
+
+  @@unique([user_id, role])
+  @@map("user_roles")
+}
+
+model TaxReturn {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id    String   @db.Uuid
+  tax_year   Int
+  status     String   @default("draft")
+  created_at DateTime @default(now()) @db.Timestamptz
+  updated_at DateTime @default(now()) @db.Timestamptz
+
+  scenarios   ReturnScenario[]
+  tax_profile TaxProfile?
+  documents   Document[]
+  flags       SystemFlag[]
+
+  @@map("tax_returns")
+}
+
+model ReturnScenario {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  return_id  String   @db.Uuid
+  user_id    String   @db.Uuid
+  name       String   @default("Scenario 1")
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamptz
+  updated_at DateTime @default(now()) @db.Timestamptz
+
+  tax_return         TaxReturn          @relation(fields: [return_id], references: [id])
+  income_records     IncomeRecord[]
+  deductions         Deduction[]
+  capital_gains      CapitalGain[]
+  capital_allowances CapitalAllowance[]
+  benefits_in_kind   BenefitInKind[]
+  asset_declarations AssetDeclaration[]
+  computation        Computation?
+  generated_forms    GeneratedForm[]
+
+  @@map("return_scenarios")
+}
+
+model TaxProfile {
+  id                  String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  return_id           String   @unique @db.Uuid
+  user_id             String   @db.Uuid
+  tin                 String   @default("")
+  filing_type         String   @default("Individual")
+  marital_status      String   @default("Single")
+  sex                 String   @default("")
+  date_of_birth       DateTime? @db.Date
+  spouse_name         String   @default("")
+  num_children        Int      @default(0)
+  occupation          String   @default("")
+  residential_address String   @default("")
+  state_of_residence  String   @default("")
+  lga                 String   @default("")
+  is_resident         Boolean  @default(true)
+  employer_name       String   @default("")
+  employer_address    String   @default("")
+  employer_tin        String   @default("")
+  created_at          DateTime @default(now()) @db.Timestamptz
+  updated_at          DateTime @default(now()) @db.Timestamptz
+
+  tax_return TaxReturn @relation(fields: [return_id], references: [id])
+
+  @@map("tax_profiles")
+}
+
+model IncomeRecord {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scenario_id   String   @db.Uuid
+  user_id       String   @db.Uuid
+  type          String   @default("Employment")
+  amount        Decimal  @default(0) @db.Decimal
+  frequency     String   @default("Annual")
+  description   String?
+  metadata_json Json?    @default("{}") @db.JsonB
+  created_at    DateTime @default(now()) @db.Timestamptz
+
+  scenario ReturnScenario @relation(fields: [scenario_id], references: [id])
+
+  @@map("income_records")
+}
+
+model Deduction {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scenario_id String   @db.Uuid
+  user_id     String   @db.Uuid
+  type        String   @default("Other")
+  amount      Decimal  @default(0) @db.Decimal
+  description String?
+  created_at  DateTime @default(now()) @db.Timestamptz
+
+  scenario ReturnScenario @relation(fields: [scenario_id], references: [id])
+
+  @@map("deductions")
+}
+
+model CapitalGain {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scenario_id String    @db.Uuid
+  user_id     String    @db.Uuid
+  asset_type  String    @default("Other")
+  description String?
+  proceeds    Decimal   @default(0) @db.Decimal
+  cost_basis  Decimal   @default(0) @db.Decimal
+  fees        Decimal   @default(0) @db.Decimal
+  realized_at DateTime? @db.Timestamptz
+  created_at  DateTime  @default(now()) @db.Timestamptz
+
+  scenario ReturnScenario @relation(fields: [scenario_id], references: [id])
+
+  @@map("capital_gains")
+}
+
+model CapitalAllowance {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scenario_id       String   @db.Uuid
+  user_id           String   @db.Uuid
+  asset_description String   @default("")
+  cost              Decimal  @default(0) @db.Decimal
+  rate_percent      Decimal  @default(0) @db.Decimal
+  allowance_amount  Decimal  @default(0) @db.Decimal
+  year_acquired     Int?
+  created_at        DateTime @default(now()) @db.Timestamptz
+
+  scenario ReturnScenario @relation(fields: [scenario_id], references: [id])
+
+  @@map("capital_allowances")
+}
+
+model BenefitInKind {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scenario_id  String   @db.Uuid
+  user_id      String   @db.Uuid
+  category     String   @default("Other")
+  annual_value Decimal  @default(0) @db.Decimal
+  description  String?
+  created_at   DateTime @default(now()) @db.Timestamptz
+
+  scenario ReturnScenario @relation(fields: [scenario_id], references: [id])
+
+  @@map("benefits_in_kind")
+}
+
+model AssetDeclaration {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scenario_id   String    @db.Uuid
+  user_id       String    @db.Uuid
+  asset_type    String    @default("Other")
+  description   String?
+  location      String    @default("")
+  cost          Decimal   @default(0) @db.Decimal
+  current_value Decimal   @default(0) @db.Decimal
+  date_acquired DateTime? @db.Date
+  created_at    DateTime  @default(now()) @db.Timestamptz
+
+  scenario ReturnScenario @relation(fields: [scenario_id], references: [id])
+
+  @@map("asset_declarations")
+}
+
+model Computation {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scenario_id    String   @unique @db.Uuid
+  user_id        String   @db.Uuid
+  total_income   Decimal  @default(0) @db.Decimal
+  taxable_income Decimal  @default(0) @db.Decimal
+  tax_owed       Decimal  @default(0) @db.Decimal
+  breakdown_json Json?    @default("{}") @db.JsonB
+  computed_at    DateTime @default(now()) @db.Timestamptz
+
+  scenario ReturnScenario @relation(fields: [scenario_id], references: [id])
+
+  @@map("computations")
+}
+
+model GeneratedForm {
+  id                  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  scenario_id         String    @db.Uuid
+  user_id             String    @db.Uuid
+  form_type           String    @default("form_a")
+  status              String    @default("draft")
+  summary_json        Json?     @default("{}") @db.JsonB
+  pdf_url             String?
+  webhook_status      String?
+  webhook_received_at DateTime? @db.Timestamptz
+  generated_at        DateTime  @default(now()) @db.Timestamptz
+
+  scenario ReturnScenario @relation(fields: [scenario_id], references: [id])
+
+  @@map("generated_forms")
+}
+
+model Document {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  return_id     String   @db.Uuid
+  user_id       String   @db.Uuid
+  file_name     String
+  file_path     String
+  file_type     String?
+  status        String   @default("uploaded")
+  metadata_json Json?    @default("{}") @db.JsonB
+  created_at    DateTime @default(now()) @db.Timestamptz
+  updated_at    DateTime @default(now()) @db.Timestamptz
+
+  tax_return TaxReturn @relation(fields: [return_id], references: [id])
+
+  @@map("documents")
+}
+
+model Subscription {
+  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id                String    @unique @db.Uuid
+  status                 String    @default("inactive")
+  plan                   String    @default("monthly")
+  amount                 Int       @default(500000)
+  paystack_reference     String?
+  paystack_customer_code String?
+  current_period_start   DateTime? @db.Timestamptz
+  current_period_end     DateTime? @db.Timestamptz
+  created_at             DateTime  @default(now()) @db.Timestamptz
+  updated_at             DateTime  @default(now()) @db.Timestamptz
+
+  @@map("subscriptions")
+}
+
+model SystemFlag {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  return_id     String    @db.Uuid
+  user_id       String    @db.Uuid
+  flag_type     String
+  message       String
+  severity      String    @default("warning")
+  resolved      Boolean   @default(false)
+  resolved_at   DateTime? @db.Timestamptz
+  metadata_json Json?     @default("{}") @db.JsonB
+  created_at    DateTime  @default(now()) @db.Timestamptz
+
+  tax_return TaxReturn @relation(fields: [return_id], references: [id])
+
+  @@map("system_flags")
+}
