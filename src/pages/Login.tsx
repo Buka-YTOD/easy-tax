@@ -49,9 +49,21 @@ export default function Login() {
     setShowWaitlist(!isSupported);
   };
 
+  const subscribeToNewsletter = async (subscriberEmail: string, name?: string) => {
+    try {
+      const [first_name, ...rest] = (name || '').split(' ');
+      const last_name = rest.join(' ');
+      await supabase.functions.invoke('subscribe-newsletter', {
+        body: { email: subscriberEmail, first_name, last_name, state: selectedState },
+      });
+    } catch (err) {
+      console.error('Newsletter subscribe failed:', err);
+    }
+  };
+
   const handleWaitlistSubmit = async () => {
     if (!waitlistEmail) return;
-    // Store waitlist entry
+    await subscribeToNewsletter(waitlistEmail);
     toast({ title: 'You\'re on the list! 🎉', description: `We'll notify you when TaxWise is available in ${selectedState}.` });
     setWaitlistSubmitted(true);
   };
