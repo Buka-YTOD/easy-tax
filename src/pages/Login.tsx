@@ -10,13 +10,15 @@ import { useToast } from '@/hooks/use-toast';
 
 const SUPPORTED_STATES = ['Lagos', 'FCT Abuja', 'Rivers'] as const;
 
-const ALL_NIGERIAN_STATES = [
+const UNSUPPORTED_STATES = [
   'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno',
-  'Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','FCT Abuja','Gombe',
-  'Imo','Jigawa','Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara','Lagos',
-  'Nasarawa','Niger','Ogun','Ondo','Osun','Oyo','Plateau','Rivers','Sokoto',
+  'Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','Gombe',
+  'Imo','Jigawa','Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara',
+  'Nasarawa','Niger','Ogun','Ondo','Osun','Oyo','Plateau','Sokoto',
   'Taraba','Yobe','Zamfara',
 ];
+
+const ALL_NIGERIAN_STATES = [...SUPPORTED_STATES, ...UNSUPPORTED_STATES];
 
 export default function Login() {
   const { isAuthenticated, isLoading: appLoading } = useAppContext();
