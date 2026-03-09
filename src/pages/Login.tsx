@@ -123,15 +123,67 @@ export default function Login() {
           </div>
           <div className="space-y-4">
             {isSignUp && (
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Full Name</label>
-                <Input
-                  placeholder="Adebayo Ogunlesi"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required
-                />
-              </div>
+              <>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground">Full Name</label>
+                  <Input
+                    placeholder="Adebayo Ogunlesi"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                    <MapPin className="h-3.5 w-3.5" /> Your State
+                  </label>
+                  <Select value={selectedState} onValueChange={handleStateChange}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your state" />
+                    </SelectTrigger>
+                    <SelectContent className="z-50 bg-popover">
+                      {ALL_NIGERIAN_STATES.map((s) => (
+                        <SelectItem key={s} value={s}>
+                          {s}
+                          {(SUPPORTED_STATES as readonly string[]).includes(s) && (
+                            <span className="ml-2 text-xs text-primary">✓ Supported</span>
+                          )}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {showWaitlist && selectedState && (
+                  <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
+                    <div className="flex items-start gap-2">
+                      <Clock className="h-4 w-4 text-primary mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-foreground">Coming soon to {selectedState}!</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          TaxWise currently supports Lagos, FCT Abuja, and Rivers. Join the waitlist and we'll notify you when we expand.
+                        </p>
+                      </div>
+                    </div>
+                    {!waitlistSubmitted ? (
+                      <div className="flex gap-2">
+                        <Input
+                          type="email"
+                          placeholder="your@email.com"
+                          value={waitlistEmail}
+                          onChange={(e) => setWaitlistEmail(e.target.value)}
+                          className="flex-1"
+                        />
+                        <Button type="button" size="sm" onClick={handleWaitlistSubmit}>
+                          Join
+                        </Button>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-primary font-medium">🎉 You're on the list!</p>
+                    )}
+                  </div>
+                )}
+              </>
             )}
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground">Email</label>
