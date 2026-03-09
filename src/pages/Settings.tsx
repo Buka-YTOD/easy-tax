@@ -212,18 +212,14 @@ export default function Settings() {
                 </FormItem>
               )} />
 
-              <FormField control={form.control} name="stateOfResidence" render={({ field }) => (
-                <FormItem>
-                  <FormLabel>State of Residence</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl><SelectTrigger><SelectValue placeholder="Select state" /></SelectTrigger></FormControl>
-                    <SelectContent>
-                      {NIGERIAN_STATES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )} />
+              <FormItem>
+                <FormLabel>State of Residence</FormLabel>
+                <div className="flex items-center gap-2 h-10 px-3 rounded-md border border-input bg-muted text-sm">
+                  <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                  <span>{userProfile?.state || 'Not set'}</span>
+                </div>
+                <p className="text-xs text-muted-foreground">Set during sign-up. Contact support to change.</p>
+              </FormItem>
 
               <FormField control={form.control} name="tin" render={({ field }) => (
                 <FormItem>
