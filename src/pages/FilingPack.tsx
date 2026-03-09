@@ -78,6 +78,7 @@ export default function FilingPack() {
 
   const summaryData = pack?.summaryJson ? JSON.parse(pack.summaryJson) : null;
   const isBusinessFiler = summaryData?.profile?.filingType === 'Business';
+  const isAbuja = summaryData?.profile?.stateOfResidence === 'FCT Abuja';
 
   const handlePrint = () => {
     window.print();
