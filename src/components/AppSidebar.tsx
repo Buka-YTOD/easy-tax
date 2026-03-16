@@ -27,6 +27,7 @@ const navGroups = [
   {
     label: 'TOOLS',
     items: [
+      { title: 'Tax Calculator', path: '/app/compute', icon: Calculator, completionKey: null },
       { title: 'Import CSV', path: '/app/import', icon: Upload, completionKey: null },
       { title: 'Tax Optimizer', path: '/app/optimizer', icon: Lightbulb, completionKey: null },
       { title: 'Year Comparison', path: '/app/comparison', icon: TrendingUp, completionKey: null },
