@@ -46,6 +46,7 @@ const App = () => (
               <Route index element={<Navigate to="home" replace />} />
               <Route path="home" element={<Home />} />
               <Route path="guided" element={<Guided />} />
+              <Route path="compute" element={<Compute />} />
               <Route path="review" element={<Review />} />
               <Route path="result" element={<Result />} />
               <Route path="filing-pack" element={<FilingPack />} />
