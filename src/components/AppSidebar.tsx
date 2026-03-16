@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X, Check, Upload, Lightbulb, TrendingUp, CalendarDays, FolderOpen, ShieldCheck } from 'lucide-react';
+import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X, Check, Upload, Lightbulb, TrendingUp, CalendarDays, FolderOpen, ShieldCheck, Calculator } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useTaxProfile } from '@/hooks/useTaxProfile';
@@ -27,6 +27,7 @@ const navGroups = [
   {
     label: 'TOOLS',
     items: [
+      { title: 'Tax Calculator', path: '/app/compute', icon: Calculator, completionKey: null },
       { title: 'Import CSV', path: '/app/import', icon: Upload, completionKey: null },
       { title: 'Tax Optimizer', path: '/app/optimizer', icon: Lightbulb, completionKey: null },
       { title: 'Year Comparison', path: '/app/comparison', icon: TrendingUp, completionKey: null },

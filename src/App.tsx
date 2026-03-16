@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Payment from "./pages/Payment";
 import Home from "./pages/Home";
 import Guided from "./pages/Guided";
+import Compute from "./pages/Compute";
 import Review from "./pages/Review";
 import Result from "./pages/Result";
 import FilingPack from "./pages/FilingPack";
@@ -45,6 +46,7 @@ const App = () => (
               <Route index element={<Navigate to="home" replace />} />
               <Route path="home" element={<Home />} />
               <Route path="guided" element={<Guided />} />
+              <Route path="compute" element={<Compute />} />
               <Route path="review" element={<Review />} />
               <Route path="result" element={<Result />} />
               <Route path="filing-pack" element={<FilingPack />} />
