@@ -17,4 +17,4 @@ step_15,15,Pay Now,"Click on ""Pay Now"" to proceed.",https://drive.google.com/f
 step_16,16,Select Payment Channel,Choose your preferred payment channel from the list.,https://drive.google.com/file/d/1psAoCHeZoPcUbkmZ9oPQ2_-lIUd54OQ4/view?usp=drive_link,Payment channel screen
 step_17,17,Make Payment,Complete the payment process using your selected method.,,Payment processing screen
 step_18,18,Payment Successful,Congratulations! You have successfully paid your tax.,,Success screen
-step_19,19,File Tax Return,"If you want to file a tax return, click on this link - ",,Tax return option screen
+step_19,19,File Tax Return,"If you want to file a tax return, click on this link - [Coming Soon]",,Tax return option screen
