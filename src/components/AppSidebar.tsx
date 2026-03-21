@@ -28,12 +28,12 @@ const navGroups = [
     label: 'TOOLS',
     items: [
       { title: 'Tax Calculator', path: '/app/tax-calculator', icon: Calculator, completionKey: null },
+      { title: 'LIRS Payment Guide', path: '/app/lirs-guide', icon: Landmark, completionKey: null },
       { title: 'Import CSV', path: '/app/import', icon: Upload, completionKey: null },
       { title: 'Tax Optimizer', path: '/app/optimizer', icon: Lightbulb, completionKey: null },
       { title: 'Year Comparison', path: '/app/comparison', icon: TrendingUp, completionKey: null },
       { title: 'Tax Calendar', path: '/app/calendar', icon: CalendarDays, completionKey: null },
       { title: 'Documents', path: '/app/documents', icon: FolderOpen, completionKey: null },
-      { title: 'LIRS Payment Guide', path: '/app/lirs-guide', icon: Landmark, completionKey: null },
     ],
   },
   {
