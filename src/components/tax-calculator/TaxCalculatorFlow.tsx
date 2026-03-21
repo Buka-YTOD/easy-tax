@@ -314,7 +314,7 @@ export default function TaxCalculatorFlow() {
                           inputMode="numeric"
                           placeholder="0"
                           value={currencyInput}
-                          onChange={(e) => setCurrencyInput(e.target.value)}
+                          onChange={(e) => handleCurrencyChange(e.target.value)}
                           onKeyDown={(e) => e.key === 'Enter' && handleCurrency()}
                           className="pl-7 text-sm"
                           autoFocus
