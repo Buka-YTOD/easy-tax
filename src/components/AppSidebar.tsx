@@ -33,6 +33,7 @@ const navGroups = [
       { title: 'Year Comparison', path: '/app/comparison', icon: TrendingUp, completionKey: null },
       { title: 'Tax Calendar', path: '/app/calendar', icon: CalendarDays, completionKey: null },
       { title: 'Documents', path: '/app/documents', icon: FolderOpen, completionKey: null },
+      { title: 'LIRS Payment Guide', path: '/app/lirs-guide', icon: Landmark, completionKey: null },
     ],
   },
   {

@@ -66,6 +66,7 @@ const App = () => (
               <Route path="calendar" element={<TaxCalendar />} />
               <Route path="documents" element={<DocumentVault />} />
               <Route path="admin" element={<AdminDashboard />} />
+              <Route path="lirs-guide" element={<LirsGuide />} />
             </Route>
             <Route path="/" element={<Navigate to="/app/home" replace />} />
             <Route path="*" element={<NotFound />} />
