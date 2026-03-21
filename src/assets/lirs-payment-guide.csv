@@ -1,0 +1,20 @@
+id,step_order,title,description,image_url,image_alt
+step_1,1,Open LIRS Website,Navigate to the LIRS website to begin your tax payment process.,https://drive.google.com/file/d/1MLU5zOQydMrxZX3iXfP0pK3CNEDiouJd/view?usp=drive_link,LIRS homepage
+step_2,2,Login to Your Account,Click on Login and enter your credentials to access your account.,https://drive.google.com/file/d/1weZ6I68BYdFXEx7Doy5ohLQSXwGzqnnD/view?usp=drive_link,Login screen
+step_3,3,Access Pay Online,"Click on ""Pay Online"" from your dashboard.",https://drive.google.com/file/d/1XsnSmbCdJJa11vXh-q8aSDMIo3jOFOM4/view?usp=drive_link,Pay online button
+step_4,4,Generate Bill Page,You will see a Generate A New Bill page,https://drive.google.com/file/d/1DvtVbTIlZJ_zj2GQ1TQhp54bZb07QVbo/view?usp=drive_link,Generate bill page
+step_5,5,Select Agency (LGA),Choose your Local Government Area (LGA) from the list.,https://drive.google.com/file/d/1gg1-pymg_WiDnDyR7HkU4_6sqTMyO9YJ/view?usp=drive_link,Agency selection screen
+step_6,6,Select Revenue Type,"Select ""Self Assessment"" as the revenue type.",https://drive.google.com/file/d/1msmx6zFbDhmHN4XFh8HzICxg_oStz-VK/view?usp=drive_link,Revenue selection screen
+step_7,7,Choose Currency,Select your preferred currency for payment.,https://drive.google.com/file/d/1reWUUjVMBkGiHLm9RVUTPlC-i_SVMs6Z/view?usp=drive_link,Currency selection screen
+step_8,8,Select Payment Period,Choose the relevant tax period for the payment.,https://drive.google.com/file/d/11bgycnfO9zHm4BWVpEB_d81FuwsJYMCz/view?usp=drive_link,Period selection screen
+step_9,9,One-Time Payment Option,Click the checkbox if this is a one-time payment.,https://drive.google.com/file/d/1cmcnoXs63w4n-WH8156_h-LuErrVa1st/view?usp=drive_link,One-time payment checkbox
+step_10,10,Enter Amount,Enter the amount you want to pay. If you don’t know the amount. we can help you calculate it. Go to https://easy-tax.lovable.app/app/tax-calculator,https://drive.google.com/file/d/1cmcnoXs63w4n-WH8156_h-LuErrVa1st/view?usp=drive_link,Amount input screen
+step_11,11,Add Remark,Add a short remark or description for your payment.,,Remark field
+step_12,12,Generate Bill,Click on Generate to create your bill.,,Generate button
+step_13,13,Confirm Payment,Review your details and confirm the payment.,https://drive.google.com/file/d/1eb326kb99CSzgGR8kUsX-YdavowWYSKq/view?usp=drive_link,Payment confirmation screen
+step_14,14,View Bill,Your generated bill will appear in the bill section.,https://drive.google.com/file/d/1LHRFkLaaC-tnaOxLMS18oAU2wTnm5P6P/view?usp=drive_link,Bill section screen
+step_15,15,Pay Now,"Click on ""Pay Now"" to proceed.",https://drive.google.com/file/d/1Ziq0Ma4t8YGTyBnwEGF25dyPxAo3gWpi/view?usp=drive_link,Pay now button
+step_16,16,Select Payment Channel,Choose your preferred payment channel from the list.,https://drive.google.com/file/d/1psAoCHeZoPcUbkmZ9oPQ2_-lIUd54OQ4/view?usp=drive_link,Payment channel screen
+step_17,17,Make Payment,Complete the payment process using your selected method.,,Payment processing screen
+step_18,18,Payment Successful,Congratulations! You have successfully paid your tax.,,Success screen
+step_19,19,File Tax Return,"If you want to file a tax return, click on this link - ",,Tax return option screen
