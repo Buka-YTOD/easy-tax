@@ -160,8 +160,18 @@ export default function TaxCalculatorFlow() {
     advance(newData, yes ? 'Yes' : 'No');
   };
 
+  const formatWithCommas = (value: string) => {
+    const raw = value.replace(/[^0-9]/g, '');
+    if (!raw) return '';
+    return Number(raw).toLocaleString('en-NG');
+  };
+
+  const handleCurrencyChange = (value: string) => {
+    setCurrencyInput(formatWithCommas(value));
+  };
+
   const handleCurrency = () => {
-    const raw = currencyInput.replace(/[^0-9.]/g, '');
+    const raw = currencyInput.replace(/[^0-9]/g, '');
     const amount = parseFloat(raw) || 0;
     if (amount <= 0) return;
 
