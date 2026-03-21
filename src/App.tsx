@@ -28,6 +28,7 @@ import TaxCalendar from "./pages/TaxCalendar";
 import DocumentVault from "./pages/DocumentVault";
 import AdminDashboard from "./pages/AdminDashboard";
 import TaxProfile from "./pages/TaxProfile";
+import LirsGuide from "./pages/LirsGuide";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
