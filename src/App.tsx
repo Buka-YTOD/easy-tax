@@ -28,6 +28,7 @@ import TaxCalendar from "./pages/TaxCalendar";
 import DocumentVault from "./pages/DocumentVault";
 import AdminDashboard from "./pages/AdminDashboard";
 import TaxProfile from "./pages/TaxProfile";
+import LirsGuide from "./pages/LirsGuide";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ const App = () => (
               <Route path="calendar" element={<TaxCalendar />} />
               <Route path="documents" element={<DocumentVault />} />
               <Route path="admin" element={<AdminDashboard />} />
+              <Route path="lirs-guide" element={<LirsGuide />} />
             </Route>
             <Route path="/" element={<Navigate to="/app/home" replace />} />
             <Route path="*" element={<NotFound />} />

@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X, Check, Upload, Lightbulb, TrendingUp, CalendarDays, FolderOpen, ShieldCheck, Calculator } from 'lucide-react';
+import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X, Check, Upload, Lightbulb, TrendingUp, CalendarDays, FolderOpen, ShieldCheck, Calculator, Landmark } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useTaxProfile } from '@/hooks/useTaxProfile';
@@ -33,6 +33,7 @@ const navGroups = [
       { title: 'Year Comparison', path: '/app/comparison', icon: TrendingUp, completionKey: null },
       { title: 'Tax Calendar', path: '/app/calendar', icon: CalendarDays, completionKey: null },
       { title: 'Documents', path: '/app/documents', icon: FolderOpen, completionKey: null },
+      { title: 'LIRS Payment Guide', path: '/app/lirs-guide', icon: Landmark, completionKey: null },
     ],
   },
   {
