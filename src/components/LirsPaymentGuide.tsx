@@ -156,6 +156,8 @@ export function LirsPaymentGuide() {
           );
         })}
       </div>
+
+      <GlossaryFloatingButton />
     </div>
   );
 }
