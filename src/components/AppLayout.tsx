@@ -1,18 +1,15 @@
 import { useState } from 'react';
-import { Outlet, Navigate, Link } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
 import { useAppContext } from '@/contexts/AppContext';
 import { useSubscription } from '@/hooks/useSubscription';
 import { AppSidebar } from '@/components/AppSidebar';
-import { FlowProgressBar } from '@/components/FlowProgressBar';
-import { MobileBottomNav } from '@/components/MobileBottomNav';
 import { Menu, LogOut, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 
 export function AppLayout() {
-  const { isAuthenticated, isLoading, profile, logout, selectedTaxYear, setSelectedTaxYear, user } = useAppContext();
+  const { isAuthenticated, isLoading, profile, logout, user } = useAppContext();
   const { isActive: subscriptionActive, loading: subLoading } = useSubscription();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -35,18 +32,6 @@ export function AppLayout() {
             <Menu className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-3 ml-auto">
-            <Select value={String(selectedTaxYear)} onValueChange={(v) => setSelectedTaxYear(Number(v))}>
-              <SelectTrigger className="w-32 h-9">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {[2024, 2025, 2026].map((y) => (
-                  <SelectItem key={y} value={String(y)}>
-                    TY {y}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="rounded-full focus:outline-none focus:ring-2 focus:ring-primary">
@@ -66,11 +51,6 @@ export function AppLayout() {
                   <p className="text-sm font-medium">{profile?.full_name || 'User'}</p>
                   <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
                 </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link to="/app/settings" className="cursor-pointer">Profile & Settings</Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout} className="text-destructive cursor-pointer">
                   <LogOut className="h-4 w-4 mr-2" /> Log out
                 </DropdownMenuItem>
@@ -78,12 +58,10 @@ export function AppLayout() {
             </DropdownMenu>
           </div>
         </header>
-        <FlowProgressBar />
-        <main className="flex-1 overflow-auto p-4 md:p-6 pb-20 md:pb-6">
+        <main className="flex-1 overflow-auto p-4 md:p-6">
           <Outlet />
         </main>
       </div>
-      <MobileBottomNav />
     </div>
   );
 }

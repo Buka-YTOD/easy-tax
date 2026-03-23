@@ -26,7 +26,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         )}
       >
         <div className="h-14 flex items-center justify-between px-4 border-b border-sidebar-border">
-          <span className="font-bold text-lg tracking-tight text-sidebar-primary">TaxWise</span>
+          <span className="font-bold text-lg tracking-tight text-sidebar-primary">Tax Ease</span>
           <Button variant="ghost" size="icon" className="lg:hidden text-sidebar-foreground hover:text-sidebar-accent-foreground" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
