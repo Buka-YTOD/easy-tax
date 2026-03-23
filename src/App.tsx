@@ -68,6 +68,7 @@ const App = () => (
               <Route path="documents" element={<DocumentVault />} />
               <Route path="admin" element={<AdminDashboard />} />
               <Route path="lirs-guide" element={<LirsGuide />} />
+              <Route path="glossary" element={<TaxGlossary />} />
             </Route>
             <Route path="/" element={<Navigate to="/app/home" replace />} />
             <Route path="*" element={<NotFound />} />
