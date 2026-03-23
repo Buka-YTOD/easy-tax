@@ -66,7 +66,7 @@ export default function Login() {
   const handleWaitlistSubmit = async () => {
     if (!waitlistEmail) return;
     await subscribeToNewsletter(waitlistEmail);
-    toast({ title: 'You\'re on the list! 🎉', description: `We'll notify you when TaxWise is available in ${selectedState}.` });
+    toast({ title: 'You\'re on the list! 🎉', description: `We'll notify you when Tax Ease is available in ${selectedState}.` });
     setWaitlistSubmitted(true);
   };
 
@@ -110,7 +110,7 @@ export default function Login() {
     <div className="min-h-screen flex">
       <div className="hidden lg:flex lg:w-1/2 bg-primary relative flex-col justify-between p-12">
         <div>
-          <h1 className="text-3xl font-bold text-primary-foreground">TaxWise</h1>
+          <h1 className="text-3xl font-bold text-primary-foreground">Tax Ease</h1>
           <p className="text-primary-foreground/70 mt-1">AI-Powered Tax Filing for Nigeria</p>
         </div>
         <div className="space-y-8">
@@ -118,13 +118,13 @@ export default function Login() {
           <Feature icon={Shield} title="Nigerian Tax Act 2026" desc="Fully compliant with latest tax regulations" />
           <Feature icon={FileCheck} title="One-Click Filing" desc="Generate your filing pack in seconds" />
         </div>
-        <p className="text-primary-foreground/40 text-sm">© 2026 TaxWise Nigeria</p>
+        <p className="text-primary-foreground/40 text-sm">© 2026 Tax Ease Nigeria</p>
       </div>
 
       <div className="flex-1 flex items-center justify-center p-8 bg-background">
         <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-8">
           <div className="lg:hidden">
-            <h1 className="text-2xl font-bold text-primary">TaxWise</h1>
+            <h1 className="text-2xl font-bold text-primary">Tax Ease</h1>
             <p className="text-muted-foreground">AI-Powered Tax Filing</p>
           </div>
           <div>
@@ -174,7 +174,7 @@ export default function Login() {
                       <div>
                         <p className="text-sm font-medium text-foreground">Coming soon to {selectedState}!</p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          TaxWise currently supports Lagos, FCT Abuja, and Rivers. Join the waitlist and we'll notify you when we expand.
+                          Tax Ease currently supports Lagos, FCT Abuja, and Rivers. Join the waitlist and we'll notify you when we expand.
                         </p>
                       </div>
                     </div>

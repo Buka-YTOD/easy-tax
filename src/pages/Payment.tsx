@@ -115,7 +115,7 @@ export default function Payment() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-lg space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-foreground">Activate TaxWise</h1>
+          <h1 className="text-3xl font-bold text-foreground">Activate Tax Ease</h1>
           <p className="text-muted-foreground">Get full access to AI-powered tax filing for Nigeria</p>
         </div>
 

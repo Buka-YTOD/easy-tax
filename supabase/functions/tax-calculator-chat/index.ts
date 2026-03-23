@@ -5,7 +5,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM_PROMPT = `You are a Nigerian tax calculator assistant for TaxWise. You help users calculate their taxes through conversation.
+const SYSTEM_PROMPT = `You are a Nigerian tax calculator assistant for Tax Ease. You help users calculate their taxes through conversation.
 
 YOUR ROLE:
 - Parse bank statements, CSV data, or manually entered financial information
