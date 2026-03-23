@@ -12,7 +12,35 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 export function AppLayout() {
   const { isAuthenticated, isLoading, profile, logout, user } = useAppContext();
   const { isActive: subscriptionActive, loading: subLoading } = useSubscription();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Track page views on route change
+  useEffect(() => {
+    const pageName = location.pathname.replace('/app/', '').replace('/', ' › ') || 'home';
+    trackPageView(pageName);
+  }, [location.pathname]);
+
+  // Track outbound link clicks
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('a[href], button');
+      if (!target) return;
+      const tag = target.tagName.toLowerCase();
+      if (tag === 'a') {
+        const href = (target as HTMLAnchorElement).href;
+        if (href && !href.startsWith(window.location.origin)) {
+          track('Outbound Link Clicked', { url: href });
+        }
+      }
+      if (tag === 'button') {
+        const text = (target as HTMLElement).textContent?.trim().slice(0, 50);
+        if (text) track('Button Clicked', { label: text, page: location.pathname });
+      }
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [location.pathname]);
 
   if (isLoading || subLoading) {
     return (
