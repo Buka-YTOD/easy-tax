@@ -29,6 +29,7 @@ import DocumentVault from "./pages/DocumentVault";
 import AdminDashboard from "./pages/AdminDashboard";
 import TaxProfile from "./pages/TaxProfile";
 import LirsGuide from "./pages/LirsGuide";
+import TaxGlossary from "./pages/TaxGlossary";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -67,6 +68,7 @@ const App = () => (
               <Route path="documents" element={<DocumentVault />} />
               <Route path="admin" element={<AdminDashboard />} />
               <Route path="lirs-guide" element={<LirsGuide />} />
+              <Route path="glossary" element={<TaxGlossary />} />
             </Route>
             <Route path="/" element={<Navigate to="/app/home" replace />} />
             <Route path="*" element={<NotFound />} />
