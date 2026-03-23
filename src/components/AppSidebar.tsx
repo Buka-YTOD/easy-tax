@@ -29,6 +29,7 @@ const navGroups = [
     items: [
       { title: 'Tax Calculator', path: '/app/tax-calculator', icon: Calculator, completionKey: null },
       { title: 'LIRS Payment Guide', path: '/app/lirs-guide', icon: Landmark, completionKey: null },
+      { title: 'LIRS Tax Return Guide', path: '/app/lirs-tax-return', icon: FileCheck, completionKey: null },
       { title: 'Tax Glossary', path: '/app/glossary', icon: BookOpen, completionKey: null },
       { title: 'Import CSV', path: '/app/import', icon: Upload, completionKey: null },
       { title: 'Tax Optimizer', path: '/app/optimizer', icon: Lightbulb, completionKey: null },
