@@ -43,6 +43,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       async (_event, session) => {
         setUser(session?.user ?? null);
         if (session?.user) {
+          // Identify user in Mixpanel
+          if (typeof window !== 'undefined' && (window as any).mixpanel) {
+            (window as any).mixpanel.identify(session.user.id);
+            (window as any).mixpanel.people.set({
+              '$email': session.user.email,
+              '$name': session.user.user_metadata?.full_name,
+            });
+          }
           // Fetch profile with setTimeout to avoid Supabase auth deadlock
           setTimeout(async () => {
             const { data } = await supabase
@@ -53,6 +61,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
             setProfile(data as Profile | null);
           }, 0);
         } else {
+          if (typeof window !== 'undefined' && (window as any).mixpanel) {
+            (window as any).mixpanel.reset();
+          }
           setProfile(null);
         }
         setIsLoading(false);
