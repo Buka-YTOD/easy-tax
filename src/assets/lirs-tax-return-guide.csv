@@ -1,0 +1,12 @@
+id,step_order,title,description,image_url,image_alt
+step_1,1,Open LIRS Website,Navigate to the LIRS website to begin your tax return filing.,https://drive.google.com/file/d/1MLU5zOQydMrxZX3iXfP0pK3CNEDiouJd/view?usp=drive_link,LIRS homepage
+step_2,2,Login to Your Account,Click on Login and enter your credentials to access your account.,https://drive.google.com/file/d/1weZ6I68BYdFXEx7Doy5ohLQSXwGzqnnD/view?usp=drive_link,Login screen
+step_3,3,Go to Tax Returns Section,Click on “Returns” on the sidebar then select “My Tax Returns”.,https://drive.google.com/file/d/1czv4d7vHv0jk9sp6z3gcuPoDjj1Obt7B/view?usp=drive_link,Tax returns menu
+step_4,4,Start Filing,Click on “File Returns Here” to begin your tax return process.,https://drive.google.com/file/d/1SJ228UOEPJZbJ1o6Gy46Zt2wEMjACe12/view?usp=drive_link,File returns button
+step_5,5,Enter Income Details,Fill in your income details and upload the required documents.,https://drive.google.com/file/d/1FPs9iObm6HbPhO3esFcC7K29OqzkN8u6/view?usp=drive_link,Income details form
+step_6,6,Go to Accommodation Section,Click Next to navigate to the Mandatory Disclosure of Accommodation section.,https://drive.google.com/file/d/1FPs9iObm6HbPhO3esFcC7K29OqzkN8u6/view?usp=drive_link,Navigation to accommodation
+step_7,7,Enter Accommodation Details,Provide your accommodation details including address and rent information.,https://drive.google.com/file/d/1YhI580g_27cNW2NDyUzFoSrQj05QEhyo/view?usp=drive_link,Accommodation form
+step_8,8,Add Additional Disclosures,"If available, add details for Support Staff, Assets, or Other Disclosure for Reliefs",,Additional disclosures section
+step_9,9,Review Your Information,Review all the information you have entered before submitting.,,Review screen
+step_10,10,Submit Tax Return,Click Submit to complete your tax return filing.,,Submit button
+step_11,11,Filing Successful,Congratulations! You have successfully filed your tax returns.,https://drive.google.com/file/d/1OQ5bCkYKJ1tNz8pv9zVpxOfszjwSG3Vl/view?usp=drive_link,Success screen
