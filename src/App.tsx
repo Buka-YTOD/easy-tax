@@ -31,6 +31,7 @@ import TaxProfile from "./pages/TaxProfile";
 import LirsGuide from "./pages/LirsGuide";
 import LirsTaxReturnGuidePage from "./pages/LirsTaxReturnGuide";
 import TaxGlossary from "./pages/TaxGlossary";
+import FeatureSuggestions from "./pages/FeatureSuggestions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
