@@ -72,6 +72,7 @@ const App = () => (
               <Route path="lirs-guide" element={<LirsGuide />} />
               <Route path="lirs-tax-return" element={<LirsTaxReturnGuidePage />} />
               <Route path="glossary" element={<TaxGlossary />} />
+              <Route path="suggestions" element={<FeatureSuggestions />} />
             </Route>
             <Route path="/" element={<Navigate to="/app/home" replace />} />
             <Route path="*" element={<NotFound />} />
