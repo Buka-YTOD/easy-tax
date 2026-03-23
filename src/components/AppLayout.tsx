@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useAppContext } from '@/contexts/AppContext';
 import { useSubscription } from '@/hooks/useSubscription';
+import { trackPageView, track } from '@/lib/mixpanel';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Menu, LogOut, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,35 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 export function AppLayout() {
   const { isAuthenticated, isLoading, profile, logout, user } = useAppContext();
   const { isActive: subscriptionActive, loading: subLoading } = useSubscription();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Track page views on route change
+  useEffect(() => {
+    const pageName = location.pathname.replace('/app/', '').replace('/', ' › ') || 'home';
+    trackPageView(pageName);
+  }, [location.pathname]);
+
+  // Track outbound link clicks
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('a[href], button');
+      if (!target) return;
+      const tag = target.tagName.toLowerCase();
+      if (tag === 'a') {
+        const href = (target as HTMLAnchorElement).href;
+        if (href && !href.startsWith(window.location.origin)) {
+          track('Outbound Link Clicked', { url: href });
+        }
+      }
+      if (tag === 'button') {
+        const text = (target as HTMLElement).textContent?.trim().slice(0, 50);
+        if (text) track('Button Clicked', { label: text, page: location.pathname });
+      }
+    };
+    document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, [location.pathname]);
 
   if (isLoading || subLoading) {
     return (

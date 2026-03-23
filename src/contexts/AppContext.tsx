@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { identifyUser, resetUser, setSuperProperties } from '@/lib/mixpanel';
 import type { User, Session } from '@supabase/supabase-js';
 
 interface Profile {
@@ -43,15 +44,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       async (_event, session) => {
         setUser(session?.user ?? null);
         if (session?.user) {
-          // Identify user in Mixpanel
-          if (typeof window !== 'undefined' && (window as any).mixpanel) {
-            (window as any).mixpanel.identify(session.user.id);
-            (window as any).mixpanel.people.set({
-              '$email': session.user.email,
-              '$name': session.user.user_metadata?.full_name,
-            });
-          }
-          // Fetch profile with setTimeout to avoid Supabase auth deadlock
+          identifyUser(session.user.id, {
+            '$email': session.user.email,
+            '$name': session.user.user_metadata?.full_name,
+          });
+          setSuperProperties({ user_id: session.user.id });
           setTimeout(async () => {
             const { data } = await supabase
               .from('profiles')
@@ -59,11 +56,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
               .eq('user_id', session.user.id)
               .single();
             setProfile(data as Profile | null);
+            if (data) {
+              setSuperProperties({
+                state: (data as Profile).state,
+                full_name: (data as Profile).full_name,
+              });
+            }
           }, 0);
         } else {
-          if (typeof window !== 'undefined' && (window as any).mixpanel) {
-            (window as any).mixpanel.reset();
-          }
+          resetUser();
           setProfile(null);
         }
         setIsLoading(false);
