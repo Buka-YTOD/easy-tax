@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, ExternalLink } from 'lucide-react';
 import csvRaw from '@/assets/lirs-payment-guide.csv?raw';
+import { GlossaryFloatingButton } from '@/components/GlossaryFloatingButton';
 
 interface Step {
   id: string;
