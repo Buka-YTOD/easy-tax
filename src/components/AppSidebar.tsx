@@ -10,7 +10,12 @@ const navItems = [
   { title: 'Tax Glossary', path: '/app/glossary', icon: BookOpen },
 ];
 
+interface AppSidebarProps {
+  open: boolean;
+  onClose: () => void;
+}
 
+export function AppSidebar({ open, onClose }: AppSidebarProps) {
   return (
     <>
       {open && <div className="fixed inset-0 bg-foreground/30 z-40 lg:hidden" onClick={onClose} />}
@@ -27,46 +32,11 @@ const navItems = [
           </Button>
         </div>
         <nav className="flex-1 py-2 px-3 overflow-auto">
-          {navGroups.map((group) => (
-            <div key={group.label} className="mb-3">
-              <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
-                {group.label}
-              </p>
-              <div className="space-y-0.5">
-                {group.items.map((item) => {
-                  const isComplete = item.completionKey ? completionMap[item.completionKey] : false;
-                  return (
-                    <NavLink
-                      key={item.path}
-                      to={item.path}
-                      onClick={onClose}
-                      className={({ isActive }) =>
-                        cn(
-                          'flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors',
-                          isActive
-                            ? 'bg-sidebar-accent text-sidebar-accent-foreground font-medium'
-                            : 'text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground'
-                        )
-                      }
-                    >
-                      <item.icon className="h-4 w-4 shrink-0" />
-                      <span className="flex-1">{item.title}</span>
-                      {isComplete && (
-                        <Check className="h-3.5 w-3.5 text-sidebar-primary shrink-0" />
-                      )}
-                    </NavLink>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-          {isAdmin && (
-            <div className="mb-3">
-              <p className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-sidebar-foreground/40">
-                ADMIN
-              </p>
+          <div className="space-y-0.5">
+            {navItems.map((item) => (
               <NavLink
-                to="/app/admin"
+                key={item.path}
+                to={item.path}
                 onClick={onClose}
                 className={({ isActive }) =>
                   cn(
@@ -77,11 +47,11 @@ const navItems = [
                   )
                 }
               >
-                <ShieldCheck className="h-4 w-4 shrink-0" />
-                <span>Admin Dashboard</span>
+                <item.icon className="h-4 w-4 shrink-0" />
+                <span className="flex-1">{item.title}</span>
               </NavLink>
-            </div>
-          )}
+            ))}
+          </div>
         </nav>
         <div className="p-4 border-t border-sidebar-border">
           <p className="text-xs text-sidebar-foreground/50">Nigerian Tax Act 2026</p>
