@@ -1,70 +1,15 @@
 import { NavLink } from 'react-router-dom';
-import { Home, Sparkles, ClipboardCheck, BarChart3, FileText, Wrench, Settings, X, Check, Upload, Lightbulb, TrendingUp, CalendarDays, FolderOpen, ShieldCheck, Calculator, Landmark, BookOpen, FileCheck } from 'lucide-react';
+import { X, Calculator, Landmark, BookOpen, FileCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { useTaxProfile } from '@/hooks/useTaxProfile';
-import { useIncome } from '@/hooks/useIncome';
-import { useComputation } from '@/hooks/useComputation';
-import { useFilingPack } from '@/hooks/useFilingPack';
-import { useIsAdmin } from '@/hooks/useAdmin';
 
-const navGroups = [
-  {
-    label: 'GET STARTED',
-    items: [
-      { title: 'Home', path: '/app/home', icon: Home, completionKey: null },
-      { title: 'Guided Interview', path: '/app/guided', icon: Sparkles, completionKey: 'income' },
-    ],
-  },
-  {
-    label: 'YOUR DATA',
-    items: [
-      { title: 'Review', path: '/app/review', icon: ClipboardCheck, completionKey: null },
-      { title: 'Result', path: '/app/result', icon: BarChart3, completionKey: 'computation' },
-      { title: 'Filing Pack', path: '/app/filing-pack', icon: FileText, completionKey: 'filingPack' },
-    ],
-  },
-  {
-    label: 'TOOLS',
-    items: [
-      { title: 'Tax Calculator', path: '/app/tax-calculator', icon: Calculator, completionKey: null },
-      { title: 'LIRS Payment Guide', path: '/app/lirs-guide', icon: Landmark, completionKey: null },
-      { title: 'LIRS Tax Return Guide', path: '/app/lirs-tax-return', icon: FileCheck, completionKey: null },
-      { title: 'Tax Glossary', path: '/app/glossary', icon: BookOpen, completionKey: null },
-      { title: 'Import CSV', path: '/app/import', icon: Upload, completionKey: null },
-      { title: 'Tax Optimizer', path: '/app/optimizer', icon: Lightbulb, completionKey: null },
-      { title: 'Year Comparison', path: '/app/comparison', icon: TrendingUp, completionKey: null },
-      { title: 'Tax Calendar', path: '/app/calendar', icon: CalendarDays, completionKey: null },
-      { title: 'Documents', path: '/app/documents', icon: FolderOpen, completionKey: null },
-    ],
-  },
-  {
-    label: 'ADVANCED',
-    items: [
-      { title: 'Manual Mode', path: '/app/manual', icon: Wrench, completionKey: null },
-      { title: 'Settings', path: '/app/settings', icon: Settings, completionKey: 'profile' },
-    ],
-  },
+const navItems = [
+  { title: 'Tax Calculator', path: '/app/tax-calculator', icon: Calculator },
+  { title: 'LIRS Payment Guide', path: '/app/lirs-guide', icon: Landmark },
+  { title: 'LIRS Tax Return Guide', path: '/app/lirs-tax-return', icon: FileCheck },
+  { title: 'Tax Glossary', path: '/app/glossary', icon: BookOpen },
 ];
 
-interface AppSidebarProps {
-  open: boolean;
-  onClose: () => void;
-}
-
-export function AppSidebar({ open, onClose }: AppSidebarProps) {
-  const { data: profile } = useTaxProfile();
-  const { data: income = [] } = useIncome();
-  const { data: computation } = useComputation();
-  const { data: filingPack } = useFilingPack();
-  const { data: isAdmin } = useIsAdmin();
-
-  const completionMap: Record<string, boolean> = {
-    profile: !!profile?.stateOfResidence,
-    income: income.length > 0,
-    computation: !!computation,
-    filingPack: !!filingPack,
-  };
 
   return (
     <>
