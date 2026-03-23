@@ -31,6 +31,7 @@ import TaxProfile from "./pages/TaxProfile";
 import LirsGuide from "./pages/LirsGuide";
 import LirsTaxReturnGuidePage from "./pages/LirsTaxReturnGuide";
 import TaxGlossary from "./pages/TaxGlossary";
+import FeatureSuggestions from "./pages/FeatureSuggestions";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -71,6 +72,7 @@ const App = () => (
               <Route path="lirs-guide" element={<LirsGuide />} />
               <Route path="lirs-tax-return" element={<LirsTaxReturnGuidePage />} />
               <Route path="glossary" element={<TaxGlossary />} />
+              <Route path="suggestions" element={<FeatureSuggestions />} />
             </Route>
             <Route path="/" element={<Navigate to="/app/home" replace />} />
             <Route path="*" element={<NotFound />} />

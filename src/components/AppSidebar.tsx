@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import { X, Calculator, Landmark, BookOpen, FileCheck } from 'lucide-react';
+import { X, Calculator, Landmark, BookOpen, FileCheck, Lightbulb } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
@@ -8,6 +8,7 @@ const navItems = [
   { title: 'LIRS Payment Guide', path: '/app/lirs-guide', icon: Landmark },
   { title: 'LIRS Tax Return Guide', path: '/app/lirs-tax-return', icon: FileCheck },
   { title: 'Tax Glossary', path: '/app/glossary', icon: BookOpen },
+  { title: 'Suggest a Feature', path: '/app/suggestions', icon: Lightbulb },
 ];
 
 interface AppSidebarProps {
