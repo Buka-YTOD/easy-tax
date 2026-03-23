@@ -90,9 +90,6 @@ function ResultDisplay({ result }: { result: TaxResult }) {
         <span className="text-sm font-bold text-primary">{result.effectiveRate.toFixed(1)}%</span>
       </div>
 
-      <p className="text-[10px] text-muted-foreground text-center mt-2">
-        We removed pension, rent, and already-taxed income before calculating. This is an estimate — consult a tax professional for official guidance.
-      </p>
     </div>
   );
 }
