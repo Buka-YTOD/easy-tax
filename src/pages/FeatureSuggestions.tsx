@@ -41,6 +41,12 @@ export default function FeatureSuggestions() {
         description: description.trim() || null,
       });
       if (error) throw error;
+
+      // Send email notification (fire-and-forget)
+      supabase.functions.invoke('send-suggestion', {
+        body: { title: title.trim(), description: description.trim(), userEmail: user.email },
+      }).catch(console.error);
+
       toast({ title: 'Thanks! 🎉', description: 'Your suggestion has been submitted.' });
       setTitle('');
       setDescription('');
