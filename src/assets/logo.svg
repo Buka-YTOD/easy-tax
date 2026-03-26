@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!-- T-shape top bar -->
+  <rect x="128" y="80" width="256" height="80" rx="8" fill="#10B981"/>
+  <!-- T-shape vertical stem merging into shield point -->
+  <path d="M208 160h96v140l-48 60-48-60V160z" fill="#10B981"/>
+  <!-- Shield right curve -->
+  <path d="M304 160c60 0 100 50 100 120 0 70-60 130-148 180l-4-5c78-45 132-100 132-175 0-60-32-100-80-100v-20z" fill="#064E3B"/>
+  <!-- Checkmark -->
+  <path d="M180 280l56 56 120-140" stroke="#064E3B" stroke-width="36" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>
