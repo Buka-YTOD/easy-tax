@@ -3,7 +3,8 @@ import { Home, Sparkles, ClipboardCheck, BarChart3, MoreHorizontal } from 'lucid
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { FileText, Wrench, Settings, Upload, Lightbulb, TrendingUp, CalendarDays, FolderOpen } from 'lucide-react';
+import { FileText, Wrench, Settings, Upload, Lightbulb, TrendingUp, CalendarDays, FolderOpen, ShieldCheck, MessageSquare } from 'lucide-react';
+import { useIsAdmin } from '@/hooks/useAdmin';
 
 const mainItems = [
   { title: 'Home', path: '/app/home', icon: Home },
@@ -23,8 +24,14 @@ const moreItems = [
   { title: 'Settings', path: '/app/settings', icon: Settings },
 ];
 
+const adminMoreItems = [
+  { title: 'Admin Dashboard', path: '/app/admin', icon: ShieldCheck },
+  { title: 'User Suggestions', path: '/app/admin/suggestions', icon: MessageSquare },
+];
+
 export function MobileBottomNav() {
   const [moreOpen, setMoreOpen] = useState(false);
+  const { data: isAdmin } = useIsAdmin();
 
   return (
     <>
@@ -75,6 +82,30 @@ export function MobileBottomNav() {
                 <span>{item.title}</span>
               </NavLink>
             ))}
+
+            {isAdmin && (
+              <>
+                <div className="pt-3 pb-1 px-3">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Admin</p>
+                </div>
+                {adminMoreItems.map((item) => (
+                  <NavLink
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setMoreOpen(false)}
+                    className={({ isActive }) =>
+                      cn(
+                        'flex items-center gap-3 px-3 py-3 rounded-lg text-sm transition-colors',
+                        isActive ? 'bg-accent text-accent-foreground font-medium' : 'text-foreground hover:bg-muted'
+                      )
+                    }
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.title}</span>
+                  </NavLink>
+                ))}
+              </>
+            )}
           </div>
         </SheetContent>
       </Sheet>

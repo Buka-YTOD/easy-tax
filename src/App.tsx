@@ -69,7 +69,10 @@ const App = () => (
               <Route path="comparison" element={<YearComparison />} />
               <Route path="calendar" element={<TaxCalendar />} />
               <Route path="documents" element={<DocumentVault />} />
-              <Route path="admin" element={<AdminDashboard />} />
+              <Route element={<AdminRoute />}>
+                <Route path="admin" element={<AdminDashboard />} />
+                <Route path="admin/suggestions" element={<FeatureSuggestions />} />
+              </Route>
               <Route path="lirs-guide" element={<LirsGuide />} />
               <Route path="lirs-tax-return" element={<LirsTaxReturnGuidePage />} />
               <Route path="glossary" element={<TaxGlossary />} />
