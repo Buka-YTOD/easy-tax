@@ -102,25 +102,6 @@ export default function FeatureSuggestions() {
         </CardContent>
       </Card>
 
-      {suggestions.length > 0 && (
-        <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-foreground">Your Suggestions</h2>
-          {suggestions.map((s: any) => (
-            <Card key={s.id}>
-              <CardContent className="p-4 space-y-1">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-medium text-foreground">{s.title}</p>
-                  <Badge variant={s.status === 'pending' ? 'secondary' : 'default'} className="shrink-0 text-xs">
-                    {s.status}
-                  </Badge>
-                </div>
-                {s.description && <p className="text-sm text-muted-foreground">{s.description}</p>}
-                <p className="text-xs text-muted-foreground">{new Date(s.created_at).toLocaleDateString()}</p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
