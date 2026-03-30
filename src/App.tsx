@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider } from "@/contexts/AppContext";
 import { AppLayout } from "@/components/AppLayout";
-import { AdminRoute } from "@/components/AdminRoute";
 import Login from "./pages/Login";
 import Payment from "./pages/Payment";
 import Home from "./pages/Home";
@@ -50,9 +49,9 @@ const App = () => (
             <Route path="/app" element={<AppLayout />}>
               <Route index element={<Navigate to="home" replace />} />
               <Route path="home" element={<Home />} />
-              <Route path="guided" element={<Guided />} />
+              {/* <Route path="guided" element={<Guided />} /> */}
               <Route path="tax-calculator" element={<Compute />} />
-              <Route path="review" element={<Review />} />
+              {/* <Route path="review" element={<Review />} />
               <Route path="result" element={<Result />} />
               <Route path="filing-pack" element={<FilingPack />} />
               <Route path="manual" element={<ManualHub />} />
@@ -68,11 +67,8 @@ const App = () => (
               <Route path="optimizer" element={<TaxOptimizer />} />
               <Route path="comparison" element={<YearComparison />} />
               <Route path="calendar" element={<TaxCalendar />} />
-              <Route path="documents" element={<DocumentVault />} />
-              <Route element={<AdminRoute />}>
-                <Route path="admin" element={<AdminDashboard />} />
-                <Route path="admin/suggestions" element={<FeatureSuggestions />} />
-              </Route>
+              <Route path="documents" element={<DocumentVault />} /> */}
+              <Route path="admin" element={<AdminDashboard />} />
               <Route path="lirs-guide" element={<LirsGuide />} />
               <Route path="lirs-tax-return" element={<LirsTaxReturnGuidePage />} />
               <Route path="glossary" element={<TaxGlossary />} />
