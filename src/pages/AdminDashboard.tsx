@@ -8,17 +8,6 @@ import { Users, AlertTriangle, FileText, ShieldCheck } from 'lucide-react';
 export default function AdminDashboard() {
   const { data: users = [], isLoading: usersLoading } = useAdminUsers();
   const { data: flags = [], isLoading: flagsLoading } = useAdminFlags();
-  const { data: suggestions = [], isLoading: suggestionsLoading } = useQuery({
-    queryKey: ['admin-feature-suggestions'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('feature_suggestions')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
 
   const unresolvedFlags = flags.filter(f => !f.resolved);
 
