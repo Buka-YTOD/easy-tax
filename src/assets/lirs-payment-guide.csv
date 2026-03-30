@@ -1,5 +1,5 @@
 id,step_order,title,description,image_url,image_alt
-step_1,1,Open LIRS Website,Navigate to the LIRS website to begin your tax payment process.,https://drive.google.com/file/d/1MLU5zOQydMrxZX3iXfP0pK3CNEDiouJd/view?usp=drive_link,LIRS homepage
+step_1,1,Open LIRS Website,Navigate to the LIRS website to begin your tax payment process - https://etax.lirs.net/.,https://drive.google.com/file/d/1MLU5zOQydMrxZX3iXfP0pK3CNEDiouJd/view?usp=drive_link,LIRS homepage
 step_2,2,Login to Your Account,Click on Login and enter your credentials to access your account.,https://drive.google.com/file/d/1weZ6I68BYdFXEx7Doy5ohLQSXwGzqnnD/view?usp=drive_link,Login screen
 step_3,3,Access Pay Online,"Click on ""Pay Online"" from your dashboard.",https://drive.google.com/file/d/1XsnSmbCdJJa11vXh-q8aSDMIo3jOFOM4/view?usp=drive_link,Pay online button
 step_4,4,Generate Bill Page,You will see a Generate A New Bill page,https://drive.google.com/file/d/1DvtVbTIlZJ_zj2GQ1TQhp54bZb07QVbo/view?usp=drive_link,Generate bill page
