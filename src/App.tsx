@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider } from "@/contexts/AppContext";
 import { AppLayout } from "@/components/AppLayout";
+import { AdminRoute } from "@/components/AdminRoute";
 import Login from "./pages/Login";
 import Payment from "./pages/Payment";
 import Home from "./pages/Home";
@@ -68,7 +69,10 @@ const App = () => (
               <Route path="comparison" element={<YearComparison />} />
               <Route path="calendar" element={<TaxCalendar />} />
               <Route path="documents" element={<DocumentVault />} />
-              <Route path="admin" element={<AdminDashboard />} />
+              <Route element={<AdminRoute />}>
+                <Route path="admin" element={<AdminDashboard />} />
+                <Route path="admin/suggestions" element={<FeatureSuggestions />} />
+              </Route>
               <Route path="lirs-guide" element={<LirsGuide />} />
               <Route path="lirs-tax-return" element={<LirsTaxReturnGuidePage />} />
               <Route path="glossary" element={<TaxGlossary />} />
