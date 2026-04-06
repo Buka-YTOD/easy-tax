@@ -44,7 +44,7 @@ export default function Landing() {
         <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.04] to-transparent" />
         <div className="relative mx-auto max-w-3xl px-6 pt-24 pb-20 md:pt-36 md:pb-28">
           <p className="text-sm font-medium text-primary tracking-wide uppercase mb-6">
-            For Lagos, Abuja & Rivers State
+            Currently available for Lagos State
           </p>
           <h1 className="text-4xl sm:text-5xl md:text-[3.5rem] font-extrabold tracking-tight leading-[1.1]">
             You earned it.<br />
@@ -117,7 +117,7 @@ export default function Landing() {
             <FeatureCard
               icon={FileText}
               title="Filing-Ready Forms"
-              description="Generate the exact Form A or Form H your state requires, pre-filled with your data. Download and submit directly to LIRS, FCT-IRS, or Rivers IRS."
+              description="Generate the exact Form A or Form H required by LIRS, pre-filled with your data. Download and submit directly to the Lagos Inland Revenue Service."
             />
             <FeatureCard
               icon={ShieldCheck}

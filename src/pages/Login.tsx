@@ -8,13 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ArrowRight, Shield, Brain, FileCheck, Loader2, MapPin, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-const SUPPORTED_STATES = ['Lagos', 'FCT Abuja', 'Rivers'] as const;
+const SUPPORTED_STATES = ['Lagos'] as const;
 
 const UNSUPPORTED_STATES = [
   'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno',
-  'Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','Gombe',
+  'Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','FCT Abuja','Gombe',
   'Imo','Jigawa','Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara',
-  'Nasarawa','Niger','Ogun','Ondo','Osun','Oyo','Plateau','Sokoto',
+  'Nasarawa','Niger','Ogun','Ondo','Osun','Oyo','Plateau','Rivers','Sokoto',
   'Taraba','Yobe','Zamfara',
 ];
 
@@ -174,7 +174,7 @@ export default function Login() {
                       <div>
                         <p className="text-sm font-medium text-foreground">Coming soon to {selectedState}!</p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Tax Ease currently supports Lagos, FCT Abuja, and Rivers. Join the waitlist and we'll notify you when we expand.
+                          Tax Ease currently supports Lagos. Join the waitlist and we'll notify you when we expand to your state.
                         </p>
                       </div>
                     </div>
