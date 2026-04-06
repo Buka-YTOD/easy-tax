@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useAppContext } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -15,6 +16,12 @@ import {
 import logoSvg from '@/assets/logo.svg';
 
 export default function Landing() {
+  const { isAuthenticated, isLoading } = useAppContext();
+
+  if (!isLoading && isAuthenticated) {
+    return <Navigate to="/payment" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground antialiased">
       {/* ─── Nav ─── */}

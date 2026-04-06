@@ -85,7 +85,7 @@ export default function Login() {
         password,
         options: {
           data: { full_name: fullName, state: selectedState },
-          emailRedirectTo: 'https://taxeasify.netlify.app',
+          emailRedirectTo: 'https://taxeasify.netlify.app/payment',
         },
       });
       if (error) {
