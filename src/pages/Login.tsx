@@ -89,7 +89,17 @@ export default function Login() {
         },
       });
       if (error) {
-        toast({ title: 'Sign up failed', description: error.message, variant: 'destructive' });
+        // If user exists but hasn't confirmed, resend the confirmation email
+        if (error.message?.toLowerCase().includes('already registered') || error.message?.toLowerCase().includes('already been registered')) {
+          await supabase.auth.resend({ type: 'signup', email });
+          toast({ title: 'Check your email', description: 'A new confirmation link has been sent to your email.' });
+        } else {
+          toast({ title: 'Sign up failed', description: error.message, variant: 'destructive' });
+        }
+      } else if (data.user && !data.user.identities?.length) {
+        // User exists but identities array is empty — unconfirmed duplicate
+        await supabase.auth.resend({ type: 'signup', email });
+        toast({ title: 'Check your email', description: 'A new confirmation link has been sent to your email.' });
       } else {
         if (data.user) {
           await supabase.from('profiles').update({ state: selectedState }).eq('user_id', data.user.id);
