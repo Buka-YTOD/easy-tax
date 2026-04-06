@@ -1,21 +1,52 @@
-import { useState } from 'react';
-import { Navigate } from 'react-router-dom';
-import { useAppContext } from '@/contexts/AppContext';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowRight, Shield, Brain, FileCheck, Loader2, MapPin, Clock } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import { useAppContext } from "@/contexts/AppContext";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowRight, Shield, Brain, FileCheck, Loader2, MapPin, Clock } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-const SUPPORTED_STATES = ['Lagos'] as const;
+const SUPPORTED_STATES = ["Lagos"] as const;
 
 const UNSUPPORTED_STATES = [
-  'Abia','Adamawa','Akwa Ibom','Anambra','Bauchi','Bayelsa','Benue','Borno',
-  'Cross River','Delta','Ebonyi','Edo','Ekiti','Enugu','FCT Abuja','Gombe',
-  'Imo','Jigawa','Kaduna','Kano','Katsina','Kebbi','Kogi','Kwara',
-  'Nasarawa','Niger','Ogun','Ondo','Osun','Oyo','Plateau','Rivers','Sokoto',
-  'Taraba','Yobe','Zamfara',
+  "Abia",
+  "Adamawa",
+  "Akwa Ibom",
+  "Anambra",
+  "Bauchi",
+  "Bayelsa",
+  "Benue",
+  "Borno",
+  "Cross River",
+  "Delta",
+  "Ebonyi",
+  "Edo",
+  "Ekiti",
+  "Enugu",
+  "FCT Abuja",
+  "Gombe",
+  "Imo",
+  "Jigawa",
+  "Kaduna",
+  "Kano",
+  "Katsina",
+  "Kebbi",
+  "Kogi",
+  "Kwara",
+  "Nasarawa",
+  "Niger",
+  "Ogun",
+  "Ondo",
+  "Osun",
+  "Oyo",
+  "Plateau",
+  "Rivers",
+  "Sokoto",
+  "Taraba",
+  "Yobe",
+  "Zamfara",
 ];
 
 const ALL_NIGERIAN_STATES = [...SUPPORTED_STATES, ...UNSUPPORTED_STATES];
@@ -24,12 +55,12 @@ export default function Login() {
   const { isAuthenticated, isLoading: appLoading } = useAppContext();
   const { toast } = useToast();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [selectedState, setSelectedState] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [selectedState, setSelectedState] = useState("");
   const [showWaitlist, setShowWaitlist] = useState(false);
-  const [waitlistEmail, setWaitlistEmail] = useState('');
+  const [waitlistEmail, setWaitlistEmail] = useState("");
   const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -53,20 +84,23 @@ export default function Login() {
 
   const subscribeToNewsletter = async (subscriberEmail: string, name?: string) => {
     try {
-      const [first_name, ...rest] = (name || '').split(' ');
-      const last_name = rest.join(' ');
-      await supabase.functions.invoke('subscribe-newsletter', {
+      const [first_name, ...rest] = (name || "").split(" ");
+      const last_name = rest.join(" ");
+      await supabase.functions.invoke("subscribe-newsletter", {
         body: { email: subscriberEmail, first_name, last_name, state: selectedState },
       });
     } catch (err) {
-      console.error('Newsletter subscribe failed:', err);
+      console.error("Newsletter subscribe failed:", err);
     }
   };
 
   const handleWaitlistSubmit = async () => {
     if (!waitlistEmail) return;
     await subscribeToNewsletter(waitlistEmail);
-    toast({ title: 'You\'re on the list! 🎉', description: `We'll notify you when Tax Ease is available in ${selectedState}.` });
+    toast({
+      title: "You're on the list! 🎉",
+      description: `We'll notify you when Tax Ease is available in ${selectedState}.`,
+    });
     setWaitlistSubmitted(true);
   };
 
@@ -76,7 +110,7 @@ export default function Login() {
 
     if (isSignUp) {
       if (!selectedState || showWaitlist) {
-        toast({ title: 'Please select a supported state', variant: 'destructive' });
+        toast({ title: "Please select a supported state", variant: "destructive" });
         setLoading(false);
         return;
       }
@@ -85,32 +119,35 @@ export default function Login() {
         password,
         options: {
           data: { full_name: fullName, state: selectedState },
-          emailRedirectTo: 'https://taxeasify.netlify.app/payment',
+          emailRedirectTo: "https://taxeasify.netlify.app/payment",
         },
       });
       if (error) {
         // If user exists but hasn't confirmed, resend the confirmation email
-        if (error.message?.toLowerCase().includes('already registered') || error.message?.toLowerCase().includes('already been registered')) {
-          await supabase.auth.resend({ type: 'signup', email });
-          toast({ title: 'Check your email', description: 'A new confirmation link has been sent to your email.' });
+        if (
+          error.message?.toLowerCase().includes("already registered") ||
+          error.message?.toLowerCase().includes("already been registered")
+        ) {
+          await supabase.auth.resend({ type: "signup", email });
+          toast({ title: "Check your email", description: "A new confirmation link has been sent to your email." });
         } else {
-          toast({ title: 'Sign up failed', description: error.message, variant: 'destructive' });
+          toast({ title: "Sign up failed", description: error.message, variant: "destructive" });
         }
       } else if (data.user && !data.user.identities?.length) {
         // User exists but identities array is empty — unconfirmed duplicate
-        await supabase.auth.resend({ type: 'signup', email });
-        toast({ title: 'Check your email', description: 'A new confirmation link has been sent to your email.' });
+        await supabase.auth.resend({ type: "signup", email });
+        toast({ title: "Check your email", description: "A new confirmation link has been sent to your email." });
       } else {
         if (data.user) {
-          await supabase.from('profiles').update({ state: selectedState }).eq('user_id', data.user.id);
+          await supabase.from("profiles").update({ state: selectedState }).eq("user_id", data.user.id);
           subscribeToNewsletter(email, fullName);
         }
-        toast({ title: 'Check your email', description: 'We sent you a confirmation link to verify your account.' });
+        toast({ title: "Check your email", description: "We sent you a confirmation link to verify your account." });
       }
     } else {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) {
-        toast({ title: 'Login failed', description: error.message, variant: 'destructive' });
+        toast({ title: "Login failed", description: error.message, variant: "destructive" });
       }
     }
     setLoading(false);
@@ -129,6 +166,7 @@ export default function Login() {
           <Feature icon={FileCheck} title="One-Click Filing" desc="Generate your filing pack in seconds" />
         </div>
         <p className="text-primary-foreground/40 text-sm">© 2026 Tax Ease Nigeria</p>
+        <p className="mt-1">Powered by Velo Systems Limited</p>
       </div>
 
       <div className="flex-1 flex items-center justify-center p-8 bg-background">
@@ -139,10 +177,10 @@ export default function Login() {
           </div>
           <div>
             <h2 className="text-2xl font-semibold text-foreground">
-              {isSignUp ? 'Create your account' : 'Welcome back'}
+              {isSignUp ? "Create your account" : "Welcome back"}
             </h2>
             <p className="text-muted-foreground mt-2">
-              {isSignUp ? 'Sign up to start managing your taxes' : 'Sign in to manage your Nigerian tax filings'}
+              {isSignUp ? "Sign up to start managing your taxes" : "Sign in to manage your Nigerian tax filings"}
             </p>
           </div>
           <div className="space-y-4">
@@ -167,11 +205,15 @@ export default function Login() {
                     </SelectTrigger>
                     <SelectContent className="z-50 bg-popover">
                       {SUPPORTED_STATES.map((s) => (
-                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                        <SelectItem key={s} value={s}>
+                          {s}
+                        </SelectItem>
                       ))}
                       <div className="my-1 h-px bg-border" />
                       {UNSUPPORTED_STATES.map((s) => (
-                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                        <SelectItem key={s} value={s}>
+                          {s}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -184,7 +226,8 @@ export default function Login() {
                       <div>
                         <p className="text-sm font-medium text-foreground">Coming soon to {selectedState}!</p>
                         <p className="text-xs text-muted-foreground mt-1">
-                          Tax Ease currently supports Lagos. Join the waitlist and we'll notify you when we expand to your state.
+                          Tax Ease currently supports Lagos. Join the waitlist and we'll notify you when we expand to
+                          your state.
                         </p>
                       </div>
                     </div>
@@ -234,19 +277,19 @@ export default function Login() {
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <>
-                  {isSignUp ? 'Sign Up' : 'Sign In'} <ArrowRight className="h-4 w-4 ml-2" />
+                  {isSignUp ? "Sign Up" : "Sign In"} <ArrowRight className="h-4 w-4 ml-2" />
                 </>
               )}
             </Button>
           </div>
           <p className="text-sm text-muted-foreground text-center">
-            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+            {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
             <button
               type="button"
               className="text-primary font-medium hover:underline"
               onClick={() => setIsSignUp(!isSignUp)}
             >
-              {isSignUp ? 'Sign In' : 'Sign Up'}
+              {isSignUp ? "Sign In" : "Sign Up"}
             </button>
           </p>
         </form>
