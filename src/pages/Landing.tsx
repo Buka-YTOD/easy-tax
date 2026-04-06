@@ -8,13 +8,15 @@ import {
   Brain,
   FileCheck,
   Landmark,
-  BookOpen,
   ArrowRight,
   CheckCircle2,
   Clock,
   Users,
   Zap,
   ChevronRight,
+  Briefcase,
+  Laptop,
+  Store,
 } from 'lucide-react';
 import logoSvg from '@/assets/logo.svg';
 
@@ -23,13 +25,13 @@ const features = [
     icon: Brain,
     title: 'AI-Powered Tax Calculation',
     description:
-      'Answer simple questions in a guided conversation. Our AI classifies your income and computes your tax — no spreadsheets needed.',
+      'Answer simple questions in a guided conversation. Our AI classifies your income and computes your tax. No spreadsheets needed.',
   },
   {
     icon: Shield,
     title: 'Nigerian Tax Act 2026 Compliant',
     description:
-      'Built on the latest tax legislation. We handle CRA, graduated rates, pension relief, and more — so you don\'t have to.',
+      'Built on the latest tax legislation. We handle CRA, graduated rates, pension relief, and more so you don\'t have to.',
   },
   {
     icon: FileCheck,
@@ -41,7 +43,7 @@ const features = [
     icon: Landmark,
     title: 'Step-by-Step LIRS Guides',
     description:
-      'Follow our detailed guides to pay your tax and file returns on the LIRS platform — no confusion, no mistakes.',
+      'Follow our detailed guides to pay your tax and file returns on the LIRS platform. No confusion, no mistakes.',
   },
 ];
 
@@ -67,6 +69,24 @@ const steps = [
     number: '03',
     title: 'Download & file',
     description: 'Get your filing-ready tax forms and follow our step-by-step guide to submit to your state IRS.',
+  },
+];
+
+const audiences = [
+  {
+    title: 'Salaried Employees',
+    desc: 'Ensure your employer deducted the right amount and claim all reliefs you\'re entitled to.',
+    icon: Briefcase,
+  },
+  {
+    title: 'Freelancers',
+    desc: 'Track multiple income streams, claim deductible expenses, and file on time.',
+    icon: Laptop,
+  },
+  {
+    title: 'Sole Proprietors',
+    desc: 'Separate business and personal income, compute your tax, and stay compliant.',
+    icon: Store,
   },
 ];
 
@@ -100,7 +120,7 @@ export default function Landing() {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/10" />
         <div className="relative mx-auto max-w-6xl px-6 py-24 md:py-32 text-center">
           <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-sm font-medium">
-            🇳🇬 Built for Nigerian taxpayers
+            <Landmark className="h-3.5 w-3.5 mr-1.5 inline" /> Built for Nigerian taxpayers
           </Badge>
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight max-w-3xl mx-auto">
             File your taxes
@@ -109,7 +129,7 @@ export default function Landing() {
           </h1>
           <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Tax Ease is the AI-powered platform that helps employees, freelancers, and sole proprietors in Nigeria
-            prepare and file compliant tax returns — in minutes, not hours.
+            prepare and file compliant tax returns in minutes, not hours.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link to="/login">
@@ -142,7 +162,7 @@ export default function Landing() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold">Everything you need to file</h2>
             <p className="mt-4 text-muted-foreground text-lg max-w-xl mx-auto">
-              From income classification to form generation — Tax Ease handles the complexity so you can focus on what
+              From income classification to form generation, Tax Ease handles the complexity so you can focus on what
               matters.
             </p>
           </div>
@@ -190,30 +210,16 @@ export default function Landing() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold">Who is Tax Ease for?</h2>
             <p className="mt-4 text-muted-foreground text-lg max-w-xl mx-auto">
-              Whether you earn a salary, run a side hustle, or freelance full-time — we've got you covered.
+              Whether you earn a salary, run a side hustle, or freelance full-time, we've got you covered.
             </p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
-            {[
-              {
-                title: 'Salaried Employees',
-                desc: 'Ensure your employer deducted the right amount and claim all reliefs you\'re entitled to.',
-                emoji: '👔',
-              },
-              {
-                title: 'Freelancers',
-                desc: 'Track multiple income streams, claim deductible expenses, and file on time.',
-                emoji: '💻',
-              },
-              {
-                title: 'Sole Proprietors',
-                desc: 'Separate business and personal income, compute your tax, and stay compliant.',
-                emoji: '🏪',
-              },
-            ].map((p) => (
+            {audiences.map((p) => (
               <Card key={p.title} className="text-center border-border/50 bg-background">
                 <CardContent className="p-8">
-                  <div className="text-4xl mb-4">{p.emoji}</div>
+                  <div className="p-3 rounded-xl bg-primary/10 w-fit mx-auto mb-4">
+                    <p.icon className="h-7 w-7 text-primary" />
+                  </div>
                   <h3 className="text-lg font-semibold mb-2">{p.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">{p.desc}</p>
                 </CardContent>
@@ -236,7 +242,7 @@ export default function Landing() {
           </p>
           <Link to="/login" className="mt-8 inline-block">
             <Button size="lg" className="text-base px-10 h-12">
-              Get Started — It's Free <ArrowRight className="h-5 w-5 ml-2" />
+              Get Started for Free <ArrowRight className="h-5 w-5 ml-2" />
             </Button>
           </Link>
         </div>
