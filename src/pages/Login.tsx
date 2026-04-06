@@ -165,8 +165,10 @@ export default function Login() {
           <Feature icon={Shield} title="Nigerian Tax Act 2026" desc="Fully compliant with latest tax regulations" />
           <Feature icon={FileCheck} title="One-Click Filing" desc="Generate your filing pack in seconds" />
         </div>
-        <p className="text-primary-foreground/40 text-sm">© 2026 Tax Ease Nigeria</p>
-        <p className="mt-1">Powered by Velo Systems Limited</p>
+        <p className="text-primary-foreground/40 text-sm">
+          © 2026 Tax Ease Nigeria <br />
+          Powered by Velo Systems LimitedΩ
+        </p>
       </div>
 
       <div className="flex-1 flex items-center justify-center p-8 bg-background">
