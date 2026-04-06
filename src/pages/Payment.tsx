@@ -134,7 +134,7 @@ export default function Payment() {
             <CardTitle className="text-xl">Payment Plan</CardTitle>
             <CardDescription>Everything you need to file with confidence</CardDescription>
             <div className="pt-2">
-              <span className="text-4xl font-bold text-foreground">₦5,000</span>
+              <span className="text-4xl font-bold text-foreground">₦3,000</span>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -163,7 +163,7 @@ export default function Payment() {
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
                 <>
-                  Pay ₦5,000 & Get Started <ArrowRight className="h-5 w-5 ml-2" />
+                  Pay ₦3,000 & Get Started <ArrowRight className="h-5 w-5 ml-2" />
                 </>
               )}
             </Button>

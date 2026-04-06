@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
         },
         body: JSON.stringify({
           email: user.email,
-          amount: 500000, // ₦5,000 in kobo
+          amount: 300000, // ₦3,000 in kobo
           currency: "NGN",
           callback_url: callbackUrl,
           metadata: {
