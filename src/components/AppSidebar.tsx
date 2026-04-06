@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { X, Calculator, Landmark, BookOpen, FileCheck, Lightbulb, ShieldCheck, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -41,7 +41,7 @@ export function AppSidebar({ open, onClose }: AppSidebarProps) {
         )}
       >
         <div className="h-14 flex items-center justify-between px-4 border-b border-sidebar-border">
-          <span className="font-bold text-lg tracking-tight text-sidebar-primary">Tax Ease</span>
+          <Link to={isAdmin ? '/app/admin' : '/app/home'} className="font-bold text-lg tracking-tight text-sidebar-primary hover:opacity-80 transition-opacity">Tax Ease</Link>
           <Button variant="ghost" size="icon" className="lg:hidden text-sidebar-foreground hover:text-sidebar-accent-foreground" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
