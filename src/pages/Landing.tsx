@@ -235,9 +235,10 @@ export default function Landing() {
             <img src={logoSvg} alt="Tax Ease" className="h-5 w-5" />
             <span className="text-sm font-semibold text-foreground">Tax Ease</span>
           </div>
-          <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Tax Ease Nigeria. All rights reserved.
-          </p>
+          <div className="text-xs text-muted-foreground text-right sm:text-left">
+            <p>&copy; {new Date().getFullYear()} Tax Ease Nigeria. All rights reserved.</p>
+            <p className="mt-1">Powered by Velo Systems Limited</p>
+          </div>
         </div>
       </footer>
     </div>
