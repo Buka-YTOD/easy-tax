@@ -34,6 +34,7 @@ import TaxGlossary from "./pages/TaxGlossary";
 import FeatureSuggestions from "./pages/FeatureSuggestions";
 import AdminSuggestions from "./pages/AdminSuggestions";
 import NotFound from "./pages/NotFound";
+import Landing from "./pages/Landing";
 
 const queryClient = new QueryClient();
 
@@ -76,7 +77,7 @@ const App = () => (
               <Route path="glossary" element={<TaxGlossary />} />
               <Route path="suggestions" element={<FeatureSuggestions />} />
             </Route>
-            <Route path="/" element={<Navigate to="/app/home" replace />} />
+            <Route path="/" element={<Landing />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
