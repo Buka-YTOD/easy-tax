@@ -167,7 +167,7 @@ export default function Login() {
         </div>
         <p className="text-primary-foreground/40 text-sm">
           © 2026 Tax Ease Nigeria <br />
-          Powered by Velo Systems LimitedΩ
+          Powered by Velo Systems Limited
         </p>
       </div>
 
