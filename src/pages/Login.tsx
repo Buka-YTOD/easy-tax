@@ -199,11 +199,11 @@ export default function Login() {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                    <MapPin className="h-3.5 w-3.5" /> Your State
+                    <MapPin className="h-3.5 w-3.5" /> Your State of Resident
                   </label>
                   <Select value={selectedState} onValueChange={handleStateChange}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select your state" />
+                      <SelectValue placeholder="Select your resident state" />
                     </SelectTrigger>
                     <SelectContent className="z-50 bg-popover">
                       {SUPPORTED_STATES.map((s) => (
