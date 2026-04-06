@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Link } from "react-router-dom";
 import { useAppContext } from "@/contexts/AppContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -157,7 +157,7 @@ export default function Login() {
     <div className="min-h-screen flex">
       <div className="hidden lg:flex lg:w-1/2 bg-primary relative flex-col justify-between p-12">
         <div>
-          <h1 className="text-3xl font-bold text-primary-foreground">Tax Ease</h1>
+          <Link to="/" className="text-3xl font-bold text-primary-foreground hover:opacity-80 transition-opacity">Tax Ease</Link>
           <p className="text-primary-foreground/70 mt-1">AI-Powered Tax Filing for Nigeria</p>
         </div>
         <div className="space-y-8">
@@ -174,7 +174,7 @@ export default function Login() {
       <div className="flex-1 flex items-center justify-center p-8 bg-background">
         <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-8">
           <div className="lg:hidden">
-            <h1 className="text-2xl font-bold text-primary">Tax Ease</h1>
+            <Link to="/" className="text-2xl font-bold text-primary hover:opacity-80 transition-opacity">Tax Ease</Link>
             <p className="text-muted-foreground">AI-Powered Tax Filing</p>
           </div>
           <div>
