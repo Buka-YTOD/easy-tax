@@ -211,12 +211,12 @@ export default function Landing() {
           <div className="mt-10">
             <Link to="/login">
               <Button size="lg" className="text-base h-13 px-10">
-                Create Your Account <ArrowRight className="h-4 w-4 ml-2" />
+                Get Started <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             </Link>
           </div>
           <p className="mt-4 text-sm text-muted-foreground">
-            Free to start. No credit card required.
+            N5,000 per tax return workspace. Pay once, file with confidence.
           </p>
         </div>
       </section>
