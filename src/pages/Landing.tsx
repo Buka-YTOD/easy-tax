@@ -1,263 +1,301 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
-  Calculator,
-  Shield,
-  Brain,
-  FileCheck,
-  Landmark,
   ArrowRight,
-  CheckCircle2,
-  Clock,
-  Users,
-  Zap,
-  ChevronRight,
-  Briefcase,
-  Laptop,
-  Store,
+  FileText,
+  ShieldCheck,
+  MapPin,
+  ClipboardCheck,
+  BookOpen,
+  Receipt,
+  HelpCircle,
+  ChevronDown,
 } from 'lucide-react';
 import logoSvg from '@/assets/logo.svg';
 
-const features = [
-  {
-    icon: Brain,
-    title: 'AI-Powered Tax Calculation',
-    description:
-      'Answer simple questions in a guided conversation. Our AI classifies your income and computes your tax. No spreadsheets needed.',
-  },
-  {
-    icon: Shield,
-    title: 'Nigerian Tax Act 2026 Compliant',
-    description:
-      'Built on the latest tax legislation. We handle CRA, graduated rates, pension relief, and more so you don\'t have to.',
-  },
-  {
-    icon: FileCheck,
-    title: 'Filing-Ready Documents',
-    description:
-      'Generate Form A (individuals) and Form H (businesses) that are ready to submit to LIRS, FCT-IRS, or Rivers IRS.',
-  },
-  {
-    icon: Landmark,
-    title: 'Step-by-Step LIRS Guides',
-    description:
-      'Follow our detailed guides to pay your tax and file returns on the LIRS platform. No confusion, no mistakes.',
-  },
-];
-
-const benefits = [
-  { icon: Clock, text: 'File in under 15 minutes' },
-  { icon: Zap, text: 'Instant tax computation' },
-  { icon: Users, text: 'Built for employees & freelancers' },
-  { icon: CheckCircle2, text: 'Lagos, Abuja & Rivers supported' },
-];
-
-const steps = [
-  {
-    number: '01',
-    title: 'Answer a few questions',
-    description: 'Tell us about your income, deductions, and filing status through a simple guided flow.',
-  },
-  {
-    number: '02',
-    title: 'We compute your tax',
-    description: 'Our engine applies CRA, pension relief, graduated rates, and all applicable rules automatically.',
-  },
-  {
-    number: '03',
-    title: 'Download & file',
-    description: 'Get your filing-ready tax forms and follow our step-by-step guide to submit to your state IRS.',
-  },
-];
-
-const audiences = [
-  {
-    title: 'Salaried Employees',
-    desc: 'Ensure your employer deducted the right amount and claim all reliefs you\'re entitled to.',
-    icon: Briefcase,
-  },
-  {
-    title: 'Freelancers',
-    desc: 'Track multiple income streams, claim deductible expenses, and file on time.',
-    icon: Laptop,
-  },
-  {
-    title: 'Sole Proprietors',
-    desc: 'Separate business and personal income, compute your tax, and stay compliant.',
-    icon: Store,
-  },
-];
-
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-lg">
-        <div className="mx-auto max-w-6xl flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-2.5">
-            <img src={logoSvg} alt="Tax Ease logo" className="h-8 w-8" />
-            <span className="text-xl font-bold text-foreground">Tax Ease</span>
-          </div>
-          <div className="flex items-center gap-3">
+    <div className="min-h-screen bg-background text-foreground antialiased">
+      {/* ─── Nav ─── */}
+      <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/90 backdrop-blur-xl">
+        <div className="mx-auto max-w-5xl flex items-center justify-between px-6 h-16">
+          <Link to="/" className="flex items-center gap-2.5">
+            <img src={logoSvg} alt="Tax Ease" className="h-7 w-7" />
+            <span className="text-lg font-bold tracking-tight text-foreground">Tax Ease</span>
+          </Link>
+          <div className="flex items-center gap-2">
             <Link to="/login">
-              <Button variant="ghost" size="sm">
-                Sign In
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                Log in
               </Button>
             </Link>
             <Link to="/login">
               <Button size="sm">
-                Get Started <ArrowRight className="h-4 w-4 ml-1" />
+                Create Account
               </Button>
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero */}
+      {/* ─── Hero ─── */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/10" />
-        <div className="relative mx-auto max-w-6xl px-6 py-24 md:py-32 text-center">
-          <Badge variant="secondary" className="mb-6 px-4 py-1.5 text-sm font-medium">
-            <Landmark className="h-3.5 w-3.5 mr-1.5 inline" /> Built for Nigerian taxpayers
-          </Badge>
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight leading-tight max-w-3xl mx-auto">
-            File your taxes
-            <br />
-            <span className="text-primary">with confidence</span>
-          </h1>
-          <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Tax Ease is the AI-powered platform that helps employees, freelancers, and sole proprietors in Nigeria
-            prepare and file compliant tax returns in minutes, not hours.
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/[0.04] to-transparent" />
+        <div className="relative mx-auto max-w-3xl px-6 pt-24 pb-20 md:pt-36 md:pb-28">
+          <p className="text-sm font-medium text-primary tracking-wide uppercase mb-6">
+            For Lagos, Abuja & Rivers State
           </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+          <h1 className="text-4xl sm:text-5xl md:text-[3.5rem] font-extrabold tracking-tight leading-[1.1]">
+            You earned it.<br />
+            We help you file it<br />
+            <span className="text-primary">correctly.</span>
+          </h1>
+          <p className="mt-8 text-lg text-muted-foreground leading-relaxed max-w-xl">
+            Most Nigerians know they should file taxes. The problem was never willingness.
+            It was knowing <em>how</em>, which form to use, what reliefs apply, and where
+            to submit. Tax Ease removes the guesswork.
+          </p>
+          <div className="mt-10 flex flex-col sm:flex-row gap-3">
             <Link to="/login">
-              <Button size="lg" className="text-base px-8 h-12">
-                Start Filing for Free <ArrowRight className="h-5 w-5 ml-2" />
+              <Button size="lg" className="text-base h-12 px-8">
+                File Your Return <ArrowRight className="h-4 w-4 ml-2" />
               </Button>
             </Link>
-            <a href="#how-it-works">
-              <Button variant="outline" size="lg" className="text-base px-8 h-12">
-                See How It Works
+            <a href="#what-you-get">
+              <Button variant="outline" size="lg" className="text-base h-12 px-8 group">
+                What you get <ChevronDown className="h-4 w-4 ml-1 group-hover:translate-y-0.5 transition-transform" />
               </Button>
             </a>
           </div>
+        </div>
+      </section>
 
-          {/* Trust badges */}
-          <div className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-4">
-            {benefits.map((b) => (
-              <div key={b.text} className="flex items-center gap-2 text-sm text-muted-foreground">
-                <b.icon className="h-4 w-4 text-primary" />
-                <span>{b.text}</span>
-              </div>
-            ))}
+      {/* ─── The Problem ─── */}
+      <section className="py-20 md:py-28 border-t border-border/40">
+        <div className="mx-auto max-w-3xl px-6">
+          <p className="text-sm font-medium text-primary tracking-wide uppercase mb-4">The reality</p>
+          <h2 className="text-2xl sm:text-3xl font-bold leading-snug max-w-2xl">
+            Tax compliance in Nigeria shouldn't require a consultant, a spreadsheet, and three visits to the tax office.
+          </h2>
+          <div className="mt-10 grid sm:grid-cols-2 gap-x-12 gap-y-8">
+            <ProblemPoint
+              icon={HelpCircle}
+              text="You don't know if your employer deducted the right amount, and you can't verify it yourself."
+            />
+            <ProblemPoint
+              icon={FileText}
+              text="Form A, Form H, CRA, graduated tax rates. The terminology alone is designed to confuse."
+            />
+            <ProblemPoint
+              icon={Receipt}
+              text="You earned income from multiple sources last year. Where do you even begin?"
+            />
+            <ProblemPoint
+              icon={MapPin}
+              text="Every state has its own portal and process. What works in Lagos doesn't apply in Abuja."
+            />
           </div>
         </div>
       </section>
 
-      {/* Features */}
-      <section className="py-20 md:py-28 bg-card/50">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold">Everything you need to file</h2>
-            <p className="mt-4 text-muted-foreground text-lg max-w-xl mx-auto">
-              From income classification to form generation, Tax Ease handles the complexity so you can focus on what
-              matters.
-            </p>
+      {/* ─── What You Get ─── */}
+      <section id="what-you-get" className="py-20 md:py-28 bg-card border-t border-border/40">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="max-w-2xl mb-16">
+            <p className="text-sm font-medium text-primary tracking-wide uppercase mb-4">What you get</p>
+            <h2 className="text-2xl sm:text-3xl font-bold leading-snug">
+              Not another calculator. A complete filing toolkit that knows Nigerian tax law.
+            </h2>
           </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            {features.map((f) => (
-              <Card key={f.title} className="border-border/50 bg-background hover:border-primary/30 transition-colors">
-                <CardContent className="p-8">
-                  <div className="p-3 rounded-xl bg-primary/10 w-fit mb-5">
-                    <f.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">{f.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{f.description}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section id="how-it-works" className="py-20 md:py-28">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold">How it works</h2>
-            <p className="mt-4 text-muted-foreground text-lg">Three simple steps to a compliant tax return.</p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-8">
-            {steps.map((s, i) => (
-              <div key={s.number} className="relative">
-                {i < steps.length - 1 && (
-                  <ChevronRight className="hidden md:block absolute -right-5 top-8 h-6 w-6 text-border" />
-                )}
-                <div className="text-5xl font-black text-primary/15 mb-3">{s.number}</div>
-                <h3 className="text-lg font-semibold mb-2">{s.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed">{s.description}</p>
-              </div>
-            ))}
+          <div className="grid md:grid-cols-2 gap-5">
+            <FeatureCard
+              icon={ClipboardCheck}
+              title="Guided Tax Computation"
+              description="Answer plain-language questions about your income, deductions, and filing status. We handle CRA calculations, pension relief, graduated rates, and minimum tax rules automatically."
+            />
+            <FeatureCard
+              icon={FileText}
+              title="Filing-Ready Forms"
+              description="Generate the exact Form A or Form H your state requires, pre-filled with your data. Download and submit directly to LIRS, FCT-IRS, or Rivers IRS."
+            />
+            <FeatureCard
+              icon={ShieldCheck}
+              title="2026 Tax Act Compliant"
+              description="Built on the current Nigerian Tax Act. When the law changes, we update. You don't have to re-learn anything."
+            />
+            <FeatureCard
+              icon={BookOpen}
+              title="Step-by-Step Filing Guides"
+              description="Detailed walkthroughs for the LIRS payment portal and tax return submission process. Every screen, every button, every field explained."
+            />
           </div>
         </div>
       </section>
 
-      {/* Who it's for */}
-      <section className="py-20 md:py-28 bg-card/50">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold">Who is Tax Ease for?</h2>
-            <p className="mt-4 text-muted-foreground text-lg max-w-xl mx-auto">
-              Whether you earn a salary, run a side hustle, or freelance full-time, we've got you covered.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-3 gap-6">
-            {audiences.map((p) => (
-              <Card key={p.title} className="text-center border-border/50 bg-background">
-                <CardContent className="p-8">
-                  <div className="p-3 rounded-xl bg-primary/10 w-fit mx-auto mb-4">
-                    <p.icon className="h-7 w-7 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold mb-2">{p.title}</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">{p.desc}</p>
-                </CardContent>
-              </Card>
-            ))}
+      {/* ─── How It Works ─── */}
+      <section className="py-20 md:py-28 border-t border-border/40">
+        <div className="mx-auto max-w-3xl px-6">
+          <p className="text-sm font-medium text-primary tracking-wide uppercase mb-4">How it works</p>
+          <h2 className="text-2xl sm:text-3xl font-bold mb-14">
+            Three steps. One afternoon. Done for the year.
+          </h2>
+          <div className="space-y-12">
+            <Step
+              number="01"
+              title="Tell us about your year"
+              description="Salary, freelance income, rental income, capital gains. We ask specific questions so nothing gets missed. If you don't understand a term, the built-in glossary explains it in plain language."
+            />
+            <Step
+              number="02"
+              title="Review your computation"
+              description="See exactly how your taxable income and tax liability were calculated. Every relief, every deduction, broken down line by line. No black box."
+            />
+            <Step
+              number="03"
+              title="Download and file"
+              description="Get your completed tax forms and follow our step-by-step guide to submit on your state's portal. We walk you through every click."
+            />
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 md:py-28">
-        <div className="mx-auto max-w-3xl px-6 text-center">
-          <div className="p-3 rounded-xl bg-primary/10 w-fit mx-auto mb-6">
-            <Calculator className="h-8 w-8 text-primary" />
+      {/* ─── Who This Is For ─── */}
+      <section className="py-20 md:py-28 bg-card border-t border-border/40">
+        <div className="mx-auto max-w-5xl px-6">
+          <div className="max-w-2xl mb-14">
+            <p className="text-sm font-medium text-primary tracking-wide uppercase mb-4">Built for you</p>
+            <h2 className="text-2xl sm:text-3xl font-bold leading-snug">
+              If you earn income in Nigeria and want to file correctly, this is your tool.
+            </h2>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold">Ready to file your taxes?</h2>
-          <p className="mt-4 text-muted-foreground text-lg max-w-xl mx-auto">
-            Join thousands of Nigerians who file their tax returns the easy way. Create your account and start filing in
-            minutes.
+          <div className="grid sm:grid-cols-3 gap-5">
+            <AudienceCard
+              title="Salaried Employees"
+              points={[
+                'Verify your employer\'s PAYE deductions',
+                'Claim reliefs you may be missing',
+                'File your annual return confidently',
+              ]}
+            />
+            <AudienceCard
+              title="Freelancers & Contractors"
+              points={[
+                'Consolidate multiple income streams',
+                'Identify deductible business expenses',
+                'Generate the right form for your state',
+              ]}
+            />
+            <AudienceCard
+              title="Sole Proprietors"
+              points={[
+                'Separate business and personal income',
+                'Apply capital allowances correctly',
+                'Stay compliant without an accountant',
+              ]}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Final CTA ─── */}
+      <section className="py-24 md:py-32 border-t border-border/40">
+        <div className="mx-auto max-w-2xl px-6 text-center">
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            Stop putting it off.
+          </h2>
+          <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
+            The filing deadline doesn't wait. Create your account, compute your tax,
+            and file your return. It takes less time than you think.
           </p>
-          <Link to="/login" className="mt-8 inline-block">
-            <Button size="lg" className="text-base px-10 h-12">
-              Get Started for Free <ArrowRight className="h-5 w-5 ml-2" />
-            </Button>
-          </Link>
+          <div className="mt-10">
+            <Link to="/login">
+              <Button size="lg" className="text-base h-13 px-10">
+                Create Your Account <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Free to start. No credit card required.
+          </p>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-10">
-        <div className="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      {/* ─── Footer ─── */}
+      <footer className="border-t border-border/40 py-8">
+        <div className="mx-auto max-w-5xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <img src={logoSvg} alt="Tax Ease" className="h-6 w-6" />
-            <span className="font-semibold text-foreground">Tax Ease</span>
+            <img src={logoSvg} alt="Tax Ease" className="h-5 w-5" />
+            <span className="text-sm font-semibold text-foreground">Tax Ease</span>
           </div>
-          <p className="text-sm text-muted-foreground">© 2026 Tax Ease Nigeria. All rights reserved.</p>
+          <p className="text-xs text-muted-foreground">
+            &copy; {new Date().getFullYear()} Tax Ease Nigeria. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>
+  );
+}
+
+/* ─── Sub-components ─── */
+
+function ProblemPoint({ icon: Icon, text }: { icon: React.ElementType; text: string }) {
+  return (
+    <div className="flex gap-3">
+      <Icon className="h-5 w-5 text-muted-foreground/60 mt-0.5 shrink-0" />
+      <p className="text-muted-foreground leading-relaxed text-[15px]">{text}</p>
+    </div>
+  );
+}
+
+function FeatureCard({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+}) {
+  return (
+    <Card className="border-border/50 bg-background">
+      <CardContent className="p-7">
+        <div className="p-2.5 rounded-lg bg-primary/10 w-fit mb-4">
+          <Icon className="h-5 w-5 text-primary" />
+        </div>
+        <h3 className="text-base font-semibold mb-2">{title}</h3>
+        <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function Step({ number, title, description }: { number: string; title: string; description: string }) {
+  return (
+    <div className="flex gap-6">
+      <span className="text-3xl font-black text-primary/20 leading-none pt-1 select-none">{number}</span>
+      <div>
+        <h3 className="text-lg font-semibold mb-1.5">{title}</h3>
+        <p className="text-muted-foreground text-[15px] leading-relaxed">{description}</p>
+      </div>
+    </div>
+  );
+}
+
+function AudienceCard({ title, points }: { title: string; points: string[] }) {
+  return (
+    <Card className="border-border/50 bg-background">
+      <CardContent className="p-7">
+        <h3 className="text-base font-semibold mb-4">{title}</h3>
+        <ul className="space-y-2.5">
+          {points.map((point) => (
+            <li key={point} className="flex gap-2.5 text-sm text-muted-foreground">
+              <ShieldCheck className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+              <span className="leading-relaxed">{point}</span>
+            </li>
+          ))}
+        </ul>
+      </CardContent>
+    </Card>
   );
 }
